@@ -40,7 +40,7 @@
             top: 60%; /* 40% from bottom = 60% from top */
         }
 
-        /* 85% line (green) */
+        /* 85% line (green) for QOF 25/26 */
         .progress-bar::after {
             content: '';
             position: absolute;
@@ -56,6 +56,16 @@
                 transparent 6px
             );
             z-index: 10;
+        }
+
+        /* 77% line (green) for QOF 24/25 */
+        .progress-bar.qof-23-24::after {
+            top: 23%; /* 77% from bottom = 23% from top */
+        }
+
+        /* 80% line (green) for QOF 24/25 in HYP009 */
+        .progress-bar.qof-23-24.hyp009::after {
+            top: 20%; /* 80% from bottom = 20% from top */
         }
 
         /* Legend labels for target lines */
@@ -81,6 +91,19 @@
             top: 15%;
             color: #22c55e;
         }
+
+        .target-label-77 {
+            right: 5px;
+            top: 23%;
+            color: #22c55e;
+        }
+
+        .target-label-80 {
+            right: 5px;
+            top: 20%;
+            color: #22c55e;
+        }
+
 
         .progress-fill {
             width: 100%;
@@ -167,9 +190,9 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
                             <select class="block w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                <option>QOF 23/24 & 24/25</option>
-                                <option>QOF 23/24 Only</option>
+                                <option>QOF 24/25 & 24/25</option>
                                 <option>QOF 24/25 Only</option>
+                                <option>QOF 25/26 Only</option>
                             </select>
                         </div>
                         <div>
@@ -201,12 +224,12 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 mb-3 relative">
                                                 <div class="progress-fill above-target" style="height: 73%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-77" data-tooltip="Maximum achievement threshold">77%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">73%</div>
                                             <div class="flex items-center justify-center text-green-600 text-xs">
                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -218,10 +241,10 @@
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill until-target" style="height: 68.9%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">68.9%</div>
                                             <div class="text-xs text-gray-500">X% until target</div>
                                         </div>
@@ -240,12 +263,12 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 mb-3 relative">
                                                 <div class="progress-fill above-target" style="height: 54.9%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-77" data-tooltip="Maximum achievement threshold">77%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">54.9%</div>
                                             <div class="flex items-center justify-center text-green-600 text-xs">
                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -257,10 +280,10 @@
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill until-target" style="height: 51.6%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">51.6%</div>
                                             <div class="text-xs text-gray-500">X% until target</div>
                                         </div>
@@ -279,21 +302,21 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 mb-3 relative">
                                                 <div class="progress-fill neutral" style="height: 24.7%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-77" data-tooltip="Maximum achievement threshold">77%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">24.7%</div>
                                         </div>
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill neutral" style="height: 25.1%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">25.1%</div>
                                         </div>
                                     </div>
@@ -321,12 +344,12 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 hyp009 mb-3 relative">
                                                 <div class="progress-fill above-target" style="height: 85%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-80" data-tooltip="Maximum achievement threshold">80%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">85%</div>
                                             <div class="flex items-center justify-center text-green-600 text-xs">
                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -338,10 +361,10 @@
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill until-target" style="height: 78%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">78%</div>
                                             <div class="text-xs text-gray-500">X% until target</div>
                                         </div>
@@ -360,12 +383,12 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 hyp009 mb-3 relative">
                                                 <div class="progress-fill above-target" style="height: 72%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-80" data-tooltip="Maximum achievement threshold">80%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">72%</div>
                                             <div class="flex items-center justify-center text-green-600 text-xs">
                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -377,10 +400,10 @@
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill until-target" style="height: 68%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">68%</div>
                                             <div class="text-xs text-gray-500">X% until target</div>
                                         </div>
@@ -399,21 +422,21 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
                                     <div class="flex space-x-6">
                                         <div class="text-center flex-1">
-                                            <div class="progress-bar mb-3 relative">
+                                            <div class="progress-bar qof-23-24 hyp009 mb-3 relative">
                                                 <div class="progress-fill neutral" style="height: 15%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-80" data-tooltip="Maximum achievement threshold">80%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">15%</div>
                                         </div>
                                         <div class="text-center flex-1">
                                             <div class="progress-bar mb-3 relative">
                                                 <div class="progress-fill neutral" style="height: 18%"></div>
-                                                <div class="target-label target-label-40">40%</div>
-                                                <div class="target-label target-label-85">85%</div>
+                                                <div class="target-label target-label-40" data-tooltip="Minimum achievement threshold">40%</div>
+                                                <div class="target-label target-label-85" data-tooltip="Maximum achievement threshold">85%</div>
                                             </div>
-                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 25/26</div>
                                             <div class="text-lg font-bold text-gray-900 mb-1">18%</div>
                                         </div>
                                     </div>
@@ -427,5 +450,46 @@
             </div>
         </main>
     </div>
+
+    <script>
+        // Tooltip positioning
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('.target-label[data-tooltip]');
+            
+            labels.forEach(label => {
+                label.addEventListener('mouseenter', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.textContent = this.getAttribute('data-tooltip');
+                    tooltip.style.cssText = `
+                        position: fixed;
+                        top: ${rect.top - 35}px;
+                        left: ${rect.left + rect.width / 2}px;
+                        transform: translateX(-50%);
+                        background: #1f2937;
+                        color: white;
+                        padding: 6px 8px;
+                        border-radius: 4px;
+                        font-size: 11px;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        z-index: 10000;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        pointer-events: none;
+                    `;
+                    document.body.appendChild(tooltip);
+                    this._tooltip = tooltip;
+                });
+                
+                label.addEventListener('mouseleave', function() {
+                    if (this._tooltip) {
+                        document.body.removeChild(this._tooltip);
+                        this._tooltip = null;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
