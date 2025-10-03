@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QOF Indicators - The Medical Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for progress bars */
+        .progress-bar {
+            width: 100%;
+            height: 200px;
+            background-color: #e5e7eb;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+            position: relative;
+        }
+
+        /* Dotted lines for achievement targets */
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: repeating-linear-gradient(
+                to right,
+                #ef4444 0,
+                #ef4444 3px,
+                transparent 3px,
+                transparent 6px
+            );
+            z-index: 10;
+        }
+
+        /* 40% line (red) */
+        .progress-bar::before {
+            top: 60%; /* 40% from bottom = 60% from top */
+        }
+
+        /* 85% line (green) */
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 15%; /* 85% from bottom = 15% from top */
+            height: 1px;
+            background: repeating-linear-gradient(
+                to right,
+                #22c55e 0,
+                #22c55e 3px,
+                transparent 3px,
+                transparent 6px
+            );
+            z-index: 10;
+        }
+
+        /* Legend labels for target lines */
+        .target-label {
+            position: absolute;
+            font-size: 10px;
+            font-weight: 500;
+            z-index: 15;
+            background: white;
+            padding: 2px 4px;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .target-label-40 {
+            right: 5px;
+            top: 60%;
+            color: #ef4444;
+        }
+
+        .target-label-85 {
+            right: 5px;
+            top: 15%;
+            color: #22c55e;
+        }
+
+        .progress-fill {
+            width: 100%;
+            transition: height 0.5s ease-in-out;
+        }
+
+        .progress-fill.above-target {
+            background-color: #22c55e;
+        }
+
+        .progress-fill.until-target {
+            background-color: #f97316;
+        }
+
+        .progress-fill.neutral {
+            background-color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-center h-14">
+                    <!-- Left side - Brand and Navigation -->
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex items-center mr-12">
+                            <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-xs font-bold">Y</span>
+                            </div>
+                            <span class="text-lg font-bold text-gray-900">The Medical Practice</span>
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <nav class="hidden md:flex space-x-10">
+                            <a href="dashboard-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">Suvera workload dashboard</a>
+                            <a href="qof-indicators-preview.html" class="text-gray-900 font-semibold border-b-2 border-blue-600 px-1 pb-3 text-sm">QOF Indicators</a>
+                            <a href="qof-summary-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">Summary</a>
+                            <div class="relative group">
+                                <button class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium flex items-center">
+                                    Referrals
+                                    <svg class="ml-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- Right side - User -->
+                    <div class="flex items-center">
+                        <!-- User Avatar -->
+                        <div class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full flex items-center cursor-pointer hover:bg-gray-200">
+                            <span class="text-sm font-medium mr-1">CG</span>
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">QOF Indicators</h1>
+                    <p class="mt-2 text-gray-600">Quality and Outcomes Framework performance metrics</p>
+                </div>
+
+                <!-- Filter Panel -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Practice</label>
+                            <select class="block w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                <option>Maltings Surgery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                            <select class="block w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                <option>QOF 23/24 & 24/25</option>
+                                <option>QOF 23/24 Only</option>
+                                <option>QOF 24/25 Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Indicator Type</label>
+                            <select class="block w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                <option>All Indicators</option>
+                                <option>Hypertension</option>
+                                <option>Diabetes</option>
+                                <option>Asthma</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QOF_HYP_008 Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-semibold text-gray-900">QOF_HYP_008</h2>
+                        <p class="text-gray-600">Hypertension: Blood pressure recorded in the preceding 12 months (Hypertension)</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Completion percentage -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Total Completion Percentage</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill above-target" style="height: 73%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">73%</div>
+                                            <div class="flex items-center justify-center text-green-600 text-xs">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                X% above target
+                                            </div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill until-target" style="height: 68.9%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">68.9%</div>
+                                            <div class="text-xs text-gray-500">X% until target</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Completion percentage (Clinical) -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Completion percentage (Clinical)</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill above-target" style="height: 54.9%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">54.9%</div>
+                                            <div class="flex items-center justify-center text-green-600 text-xs">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                X% above target
+                                            </div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill until-target" style="height: 51.6%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">51.6%</div>
+                                            <div class="text-xs text-gray-500">X% until target</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- All Exceptions (%) -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">All Exceptions (%)</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill neutral" style="height: 24.7%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">24.7%</div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill neutral" style="height: 25.1%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">25.1%</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QOF_HYP_009 Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-semibold text-gray-900">QOF_HYP_009</h2>
+                        <p class="text-gray-600">Hypertension: Blood pressure in the preceding 12 months is 150/90 mmHg or less (Hypertension)</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Completion percentage -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Total Completion Percentage</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill above-target" style="height: 85%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">85%</div>
+                                            <div class="flex items-center justify-center text-green-600 text-xs">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                X% above target
+                                            </div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill until-target" style="height: 78%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">78%</div>
+                                            <div class="text-xs text-gray-500">X% until target</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Completion percentage (Clinical) -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Completion percentage (Clinical)</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill above-target" style="height: 72%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">72%</div>
+                                            <div class="flex items-center justify-center text-green-600 text-xs">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                X% above target
+                                            </div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill until-target" style="height: 68%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">68%</div>
+                                            <div class="text-xs text-gray-500">X% until target</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- All Exceptions (%) -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">All Exceptions (%)</h3>
+                            <div class="space-y-8">
+                                <!-- Maltings Surgery -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-4">Maltings Surgery</h4>
+                                    <div class="flex space-x-6">
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill neutral" style="height: 15%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 23/24</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">15%</div>
+                                        </div>
+                                        <div class="text-center flex-1">
+                                            <div class="progress-bar mb-3 relative">
+                                                <div class="progress-fill neutral" style="height: 18%"></div>
+                                                <div class="target-label target-label-40">40%</div>
+                                                <div class="target-label target-label-85">85%</div>
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">QOF 24/25</div>
+                                            <div class="text-lg font-bold text-gray-900 mb-1">18%</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>

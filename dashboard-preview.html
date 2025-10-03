@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suvera Workload Dashboard - The Medical Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for circular progress indicators */
+        .circular-progress {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .circular-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .circular-progress .background {
+            stroke: #e5e7eb;
+        }
+
+        .circular-progress .progress {
+            stroke-dasharray: 314;
+            stroke-dashoffset: 314;
+            transition: stroke-dashoffset 0.5s ease-in-out;
+        }
+
+        .circular-progress .progress.green {
+            stroke: #22c55e;
+        }
+
+        .circular-progress .progress.orange {
+            stroke: #f97316;
+        }
+
+        .circular-progress .progress.blue {
+            stroke: #3b82f6;
+        }
+
+        .circular-progress .progress.red {
+            stroke: #ef4444;
+        }
+
+        .circular-progress .progress.purple {
+            stroke: #8b5cf6;
+        }
+        .circular-progress .progress.pink {
+            stroke: #ec4899;
+        }
+        .circular-progress .progress.gray {
+            stroke: #6b7280;
+        }
+
+        .circular-progress .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-center h-14">
+                    <!-- Left side - Brand and Navigation -->
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex items-center mr-12">
+                            <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-xs font-bold">Y</span>
+                            </div>
+                            <span class="text-lg font-bold text-gray-900">The Medical Practice</span>
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <nav class="hidden md:flex space-x-10">
+                            <a href="dashboard-preview.html" class="text-gray-900 font-semibold border-b-2 border-blue-600 px-1 pb-3 text-sm">Suvera workload dashboard</a>
+                            <a href="qof-indicators-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">QOF Indicators</a>
+                            <a href="qof-summary-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">Summary</a>
+                            <div class="relative group">
+                                <button class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium flex items-center">
+                                    Referrals
+                                    <svg class="ml-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- Right side - User -->
+                    <div class="flex items-center">
+                        <!-- User Avatar -->
+                        <div class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full flex items-center cursor-pointer hover:bg-gray-200">
+                            <span class="text-sm font-medium mr-1">CG</span>
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <!-- Welcome Section -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <h1 class="text-3xl font-bold text-gray-900">Hello, Clara 👋</h1>
+                            <div class="text-lg text-gray-600" id="current-date"></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="week-range"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Left Column - Filters -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Target areas</label>
+                                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>All target areas</option>
+                                        <option>Hypertension</option>
+                                        <option>Diabetes</option>
+                                        <option>Asthma</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Practices</label>
+                                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                        <option>All practices</option>
+                                        <option>Maltings Surgery</option>
+                                        <option>Summerfield Health Center</option>
+                                    </select>
+                                </div>
+                                <button class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-200">
+                                    Reset filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Main Content -->
+                    <div class="lg:col-span-3">
+                        <!-- Top Row - QOF Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <!-- QOF Points Card -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">QOF points</h3>
+                                <div class="flex justify-center">
+                                    <div class="circular-progress">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="45" class="background"></circle>
+                                            <circle cx="50" cy="50" r="45" class="progress blue" id="qof-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-2xl font-bold text-gray-900">510</div>
+                                            <div class="text-sm text-gray-500">/564</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <div class="flex items-center justify-center text-green-600 text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 15 points from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QOF Register Size Card -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">QOF register size</h3>
+                                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium hover:bg-blue-700">
+                                        View patient list
+                                    </button>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold text-gray-900 mb-2">400</div>
+                                    <div class="flex items-center justify-center text-red-600 text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        50 from last week
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Domain Section -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Clinical Domain (437 Points)</h3>
+                        </div>
+
+                        <!-- Clinical Domain Cards Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Asthma -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Asthma</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress green" id="asthma-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">52%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 3% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hypertension -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Hypertension</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress orange" id="hypertension-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">29%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-red-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Down 1% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cholesterol -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Cholesterol</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress green" id="cholesterol-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">80%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 25% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diabetes -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Diabetes</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress gray" id="diabetes-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">2%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-xs">No changes</div>
+                                </div>
+                            </div>
+
+                            <!-- Atrial Fibrillation -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Atrial Fibrillation</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress blue" id="af-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">60%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 5% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CHD -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">CHD</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress orange" id="chd-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">40%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-red-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Down 2% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Heart Failure -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">HF</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress red" id="hf-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">20%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-xs">No changes</div>
+                                </div>
+                            </div>
+
+                            <!-- Stroke and TIA -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">STIA</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress purple" id="stia-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">10%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 1% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diabetes Mellitus (DM) -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Diabetes Mellitus (DM)</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress red" id="dm-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">2%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-xs">No changes</div>
+                                </div>
+                            </div>
+
+                            <!-- COPD -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">COPD</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress blue" id="copd-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">30%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-red-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Down 3% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dementia (DEM) -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Dementia (DEM)</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress purple" id="dementia-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">10%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 2% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mental Health (MDH) -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Mental Health (MDH)</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress pink" id="mental-health-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">60%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-green-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Up 8% from last week
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Non-Diabetic Hyperglycaemia (NDH) -->
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">Non-Diabetic Hyperglycaemia (NDH)</h4>
+                                    <a href="#" class="text-blue-600 text-xs">View</a>
+                                </div>
+                                <div class="flex justify-center mb-3">
+                                    <div class="circular-progress" style="width: 80px; height: 80px;">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" class="background"></circle>
+                                            <circle cx="50" cy="50" r="35" class="progress orange" id="ndh-progress"></circle>
+                                        </svg>
+                                        <div class="text">
+                                            <div class="text-lg font-bold text-gray-900">20%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center text-red-600 text-xs">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Down 1% from last week
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Update current date
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+            
+            // Calculate week range
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            
+            const weekOptions = { month: 'short', day: 'numeric' };
+            const weekRange = `${startOfWeek.toLocaleDateString('en-US', weekOptions)} - ${endOfWeek.toLocaleDateString('en-US', weekOptions)}`;
+            document.getElementById('week-range').textContent = weekRange;
+        }
+
+        // Animate circular progress indicators
+        function animateProgress() {
+            const progressData = {
+                'qof-progress': 90, // 510/564 = ~90%
+                'asthma-progress': 52,
+                'hypertension-progress': 29,
+                'cholesterol-progress': 80,
+                'diabetes-progress': 2,
+                'af-progress': 60,
+                'chd-progress': 40,
+                'hf-progress': 20,
+                'stia-progress': 10,
+                'dm-progress': 2,
+                'copd-progress': 30,
+                'dementia-progress': 10,
+                'mental-health-progress': 60,
+                'ndh-progress': 20
+            };
+
+            Object.entries(progressData).forEach(([id, percentage]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const radius = id === 'qof-progress' ? 45 : 35; // Different radius for main vs small circles
+                    const circumference = 2 * Math.PI * radius;
+                    const offset = circumference - (percentage / 100) * circumference;
+                    element.style.strokeDashoffset = offset;
+                }
+            });
+        }
+
+        // Initialize on page load
+        updateDate();
+        setTimeout(animateProgress, 100); // Small delay to ensure DOM is ready
+    </script>
+</body>
+</html>

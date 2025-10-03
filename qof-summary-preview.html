@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QOF Summary - The Medical Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-center h-14">
+                    <!-- Left side - Brand and Navigation -->
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex items-center mr-12">
+                            <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-xs font-bold">Y</span>
+                            </div>
+                            <span class="text-lg font-bold text-gray-900">The Medical Practice</span>
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <nav class="hidden md:flex space-x-10">
+                            <a href="dashboard-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">Suvera workload dashboard</a>
+                            <a href="qof-indicators-preview.html" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium">QOF Indicators</a>
+                            <a href="qof-summary-preview.html" class="text-gray-900 font-semibold border-b-2 border-blue-600 px-1 pb-3 text-sm">Summary</a>
+                            <div class="relative group">
+                                <button class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium flex items-center">
+                                    Referrals
+                                    <svg class="ml-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- Right side - User -->
+                    <div class="flex items-center">
+                        <!-- User Avatar -->
+                        <div class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full flex items-center cursor-pointer hover:bg-gray-200">
+                            <span class="text-sm font-medium mr-1">CG</span>
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">QOF Performance Dashboard</h1>
+                    <p class="mt-2 text-gray-600">Summary of Quality and Outcomes Framework targets and performance</p>
+                </div>
+
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Total Targets</h3>
+                                <p class="text-2xl font-bold text-blue-600">54</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Critical Targets</h3>
+                                <p class="text-2xl font-bold text-red-600">12</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">On Track</h3>
+                                <p class="text-2xl font-bold text-green-600">42</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview Table -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Performance Overview</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">QOF Target</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patients</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% Complete</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">+/- Forecast</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target %</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HYP001 - Blood pressure recording</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HYP002 - Blood pressure control</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM001 - HbA1c recording</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM002 - HbA1c control</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AST001 - Asthma review</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HYP001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HYP008</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HYP009</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AF001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AF006</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AF008</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AST005</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AST012</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AST007</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">AST008</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHD001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHD015</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHD016</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHD005</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHOLREG</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHOL2REG</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHOL003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CHOL004</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">COPD015</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">COPD014</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">COPD010</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DEM001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DEM004</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM017</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM014</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM036</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM034</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM035</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM006</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM020</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM021</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DM012</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF1</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF2</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF008</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF006</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">HF007</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH1_REG</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH2_REG</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH006</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH007</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH011</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH012</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">MH021</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">NDH_Reg</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">NDH002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">78%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">908</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-orange-600">-45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">At Risk</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">STIA001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">642</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">88%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+64</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">STIA014</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">578</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">65%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">520</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-58</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Critical</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">STIA015</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">423</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">380</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+43</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">STIA007</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,234</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1,135</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+99</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">80%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
