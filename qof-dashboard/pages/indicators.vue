@@ -99,7 +99,7 @@
               </div>
             </div>
           </div>
-        </div>
+      </div>
 
       <!-- Hero Section - Forecast and Estimated Value -->
       <HeroSection :condition="route.query.condition || null" />
@@ -113,7 +113,7 @@
             </svg>
             Back to Dashboard
           </NuxtLink>
-        </div>
+                </div>
         <div class="flex items-center justify-between">
           <h2 class="text-2xl font-semibold text-gray-900">{{ conditionData.title }} targets</h2>
           <div class="flex items-center gap-4">
@@ -141,9 +141,9 @@
             <option v-for="target in conditionData.targets" :key="target.code">{{ target.name }}</option>
           </select>
                 </div>
-        </div>
-      </div>
-
+                </div>
+              </div>
+              
       <!-- QOF Target Cards -->
       <div class="space-y-6">
         <div 
@@ -152,10 +152,10 @@
           class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
         >
         <div class="flex justify-between items-start mb-6">
-          <div>
+              <div>
               <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ target.qofCode || conditionData.qofCode }}</h3>
               <p class="text-sm text-gray-600">{{ target.description || conditionData.description }}</p>
-          </div>
+                </div>
           <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -197,74 +197,78 @@
                         <div class="text-2xl font-bold text-gray-900">{{ Math.round(getTargetProgress(target)) }}%</div>
                         <div class="text-xs text-gray-600">of target</div>
                       </div>
-                    </div>
-                  </div>
                 </div>
-
+              </div>
+            </div>
+            
                 <!-- Target Breakdown (next to circle) -->
                 <div class="flex-1">
                   <div class="text-sm font-medium text-gray-700 mb-2">Target Breakdown</div>
-                  <!-- Horizontal Progress Bar -->
-                  <div class="relative h-8 bg-gray-100 rounded-full overflow-hidden">
-                    <!-- Clinical segment (blue) -->
-                    <div 
-                      class="absolute left-0 top-0 bottom-0 bg-blue-600"
-                      :style="`width: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                    ></div>
-                    <!-- Exception segment (green) -->
-                    <div 
-                      class="absolute top-0 bottom-0 bg-green-500"
-                      :style="`left: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%; width: ${(getExceptionReportingPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                    ></div>
-                    <!-- Remaining segment (grey) -->
-                    <div 
-                      class="absolute right-0 top-0 bottom-0 bg-gray-300"
-                      :style="`width: ${((getPatientNumbers(target, getActualCompletion(target)).totalRegister - getClinicalCompletionPatients(target) - getExceptionReportingPatients(target)) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                    ></div>
-                    
+                  <!-- Horizontal Progress Bar Container with markers -->
+                  <div class="relative py-2">
+                    <!-- Progress Bar -->
+                    <div class="relative h-8 bg-gray-100 rounded-full overflow-hidden">
+                      <!-- Clinical segment (blue) -->
+                      <div 
+                        class="absolute left-0 top-0 bottom-0 bg-blue-600"
+                        :style="`width: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
+                      ></div>
+                      <!-- Exception segment (green) -->
+                      <div 
+                        class="absolute top-0 bottom-0 bg-green-500"
+                        :style="`left: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%; width: ${(getExceptionReportingPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
+                      ></div>
+                      <!-- Remaining segment (grey) -->
+                      <div 
+                        class="absolute right-0 top-0 bottom-0 bg-gray-300"
+                        :style="`width: ${((getPatientNumbers(target, getActualCompletion(target)).totalRegister - getClinicalCompletionPatients(target) - getExceptionReportingPatients(target)) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
+                      ></div>
+            </div>
+            
                     <!-- Minimum Achievement Threshold Marker -->
                     <div 
-                      class="absolute top-0 bottom-0 w-0.5 z-10"
-                      :style="`left: ${getMinAchievementForTarget(target)}%;`"
+                      class="absolute top-0 bottom-0 pointer-events-none"
+                      :style="`left: ${getMinAchievementForTarget(target)}%; width: 0;`"
                     >
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rotate-45"></div>
-                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rotate-45"></div>
-                    </div>
+                      <!-- Label above -->
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 text-xs font-medium text-red-600 whitespace-nowrap">Min Achievement Threshold</div>
+                      <!-- Dashed line through full height -->
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-red-500"></div>
+                      <!-- Diamond above -->
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-red-500 rotate-45"></div>
+                      <!-- Diamond below -->
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2.5 h-2.5 bg-red-500 rotate-45"></div>
+              </div>
                     
                     <!-- Expected by Today Marker -->
                     <div 
-                      class="absolute top-0 bottom-0 w-0.5 border-l-2 border-dashed border-purple-500 z-10"
-                      :style="`left: ${getExpectedAchievement(target)}%;`"
+                      class="absolute top-0 bottom-0 pointer-events-none"
+                      :style="`left: ${getExpectedAchievement(target)}%; width: 0;`"
                     >
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-purple-500 rotate-45"></div>
+                      <!-- Dashed line through full height -->
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-purple-500"></div>
+                      <!-- Diamond above -->
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-purple-500 rotate-45"></div>
+                      <!-- Label below -->
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 text-xs font-medium text-purple-600 whitespace-nowrap">Expected by Today</div>
                     </div>
                     
                     <!-- Maximum Achievement Threshold Marker -->
                     <div 
-                      class="absolute top-0 bottom-0 w-0.5 z-10"
-                      :style="`left: ${getMaxAchievement(target)}%;`"
+                      class="absolute top-0 bottom-0 pointer-events-none"
+                      :style="`left: ${getMaxAchievement(target)}%; width: 0;`"
                     >
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-green-500 rotate-45"></div>
-                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-green-500 rotate-45"></div>
-                    </div>
-                  </div>
-                  
-                  <!-- Legend -->
-                  <div class="mt-2 flex flex-wrap gap-4 text-xs">
-                    <div class="flex items-center gap-1">
-                      <div class="w-2 h-2 bg-red-500 rotate-45"></div>
-                      <span class="text-gray-600">Minimum Achievement Threshold</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                      <div class="w-2 h-2 bg-purple-500 rotate-45"></div>
-                      <span class="text-gray-600">Expected by Today</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                      <div class="w-2 h-2 bg-green-500 rotate-45"></div>
-                      <span class="text-gray-600">Maximum Achievement Threshold</span>
-                    </div>
-                  </div>
-                  
+                      <!-- Label above -->
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 text-xs font-medium text-green-600 whitespace-nowrap">Max Achievement Threshold</div>
+                      <!-- Dashed line through full height -->
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-green-500"></div>
+                      <!-- Diamond above -->
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-green-500 rotate-45"></div>
+                      <!-- Diamond below -->
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2.5 h-2.5 bg-green-500 rotate-45"></div>
+          </div>
+        </div>
+
                   <!-- Breakdown Cards -->
                   <div class="grid grid-cols-3 gap-3 mt-4">
                     <!-- Clinical Card -->
@@ -275,18 +279,18 @@
                       </div>
                       <div class="text-lg font-bold text-gray-900">{{ getClinicalCompletionPatients(target).toLocaleString() }}</div>
                       <div class="text-xs text-gray-600">{{ Math.round((getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% of target</div>
-                    </div>
-                    
+            </div>
+            
                     <!-- Exception Card -->
                     <div class="bg-white border border-gray-200 rounded-lg p-3">
                       <div class="flex items-center gap-2 mb-1">
                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                         <span class="text-xs font-medium text-gray-700">Exception</span>
-                      </div>
+            </div>
                       <div class="text-lg font-bold text-gray-900">{{ getExceptionReportingPatients(target).toLocaleString() }}</div>
                       <div class="text-xs text-gray-600">{{ Math.round((getExceptionReportingPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% of target</div>
-                    </div>
-
+          </div>
+          
                     <!-- Remaining Card -->
                     <div class="bg-white border border-gray-200 rounded-lg p-3">
                       <div class="flex items-center gap-2 mb-1">
@@ -298,8 +302,8 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+        </div>
+      </div>
 
             <!-- Revenue Left on Table (takes 1 column, same width as Resource Planning) -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -309,10 +313,10 @@
                 <div class="flex items-start">
                   <svg class="w-5 h-5 text-orange-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                  </svg>
+            </svg>
                   <div>
                     <div class="text-sm font-medium text-orange-800">{{ getUnclaimedPoints(target) }} unclaimed QOF points from {{ getRemainingPatients(target) }} patients</div>
-                  </div>
+        </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-3">
@@ -325,54 +329,54 @@
                   <div class="text-xl font-bold text-gray-900">{{ getRemainingPatients(target) }}</div>
                 </div>
               </div>
-            </div>
-          </div>
+        </div>
+      </div>
 
           <!-- Clinical, Exception, and Resource Planning Row (Row 2) -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <!-- Clinical Completion Analysis -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h4 class="text-lg font-semibold text-gray-900 mb-1">Clinical Completion Analysis</h4>
               <p class="text-sm text-gray-600 mb-4">Patients clinically complete</p>
               
               <div class="space-y-3">
                 <!-- Current -->
-                <div>
+          <div>
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-sm font-medium text-gray-700">Current</span>
                     <span class="text-sm font-semibold text-gray-900">{{ getClinicalCompletionPatients(target).toLocaleString() }}</span>
-                  </div>
+          </div>
                   <div class="w-full bg-gray-200 rounded-full h-6">
                     <div class="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getClinicalCompletionPatients(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`">
                     </div>
                   </div>
-                </div>
-                
+        </div>
+
                 <!-- Expected -->
-              <div>
+          <div>
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-sm font-medium text-gray-700">Expected</span>
                     <span class="text-sm font-semibold text-gray-900">{{ getExpectedClinical(target).toLocaleString() }}</span>
-                  </div>
+                </div>
                   <div class="w-full bg-gray-200 rounded-full h-6">
                     <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExpectedClinical(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`">
-                    </div>
                   </div>
                 </div>
-                
+              </div>
+              
                 <!-- Last Year -->
-                <div>
+              <div>
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-sm font-medium text-gray-700">Last Year</span>
                     <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinical(target).toLocaleString() }}</span>
-                  </div>
+                </div>
                   <div class="w-full bg-gray-200 rounded-full h-6">
                     <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getLastYearClinical(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`">
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
             <!-- Exception Reporting Analysis -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -381,28 +385,28 @@
               
               <div class="space-y-3 mb-4">
                 <!-- Current -->
-                <div>
+          <div>
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-sm font-medium text-gray-700">Current</span>
                     <span class="text-sm font-semibold text-gray-900">{{ getExceptionReportingPatients(target).toLocaleString() }}</span>
-                  </div>
+                </div>
                   <div class="w-full bg-gray-200 rounded-full h-6">
                     <div class="bg-green-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExceptionReportingPatients(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`">
-                    </div>
                   </div>
-          </div>
-
+                </div>
+              </div>
+              
                 <!-- Expected -->
-          <div>
+              <div>
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-sm font-medium text-gray-700">Expected</span>
                     <span class="text-sm font-semibold text-gray-900">{{ getExpectedException(target).toLocaleString() }}</span>
-                  </div>
+                </div>
                   <div class="w-full bg-gray-200 rounded-full h-6">
                     <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExpectedException(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`">
-                    </div>
                   </div>
                 </div>
+              </div>
                 
                 <!-- Last Year -->
                 <div>
@@ -414,9 +418,9 @@
                     <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getLastYearException(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`">
                     </div>
                   </div>
-                </div>
-              </div>
-              
+            </div>
+          </div>
+
               <!-- Exception Rate Comparison -->
               <div class="bg-white border border-gray-200 rounded-lg p-3">
                 <div class="flex justify-between items-center">
@@ -431,10 +435,10 @@
                       <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
                   </span>
+                  </div>
                 </div>
               </div>
-            </div>
-
+              
             <!-- Resource Planning -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -459,21 +463,21 @@
                     </svg>
                   </span>
                   <span class="text-lg font-semibold text-gray-900">£{{ getSuveraCost(target).toLocaleString() }}</span>
+                  </div>
                 </div>
-              </div>
               
               <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div class="flex justify-between items-center mb-2">
                   <span class="text-sm font-medium text-gray-700">Potential Savings:</span>
                   <span class="text-2xl font-bold text-green-700">£{{ getPotentialSavings(target).toLocaleString() }}</span>
-                </div>
-                <div class="text-xs text-gray-600">Save {{ getSavingsPercentage(target) }}% with Suvera virtual clinic</div>
               </div>
+                <div class="text-xs text-gray-600">Save {{ getSavingsPercentage(target) }}% with Suvera virtual clinic</div>
             </div>
           </div>
-        </template>
         </div>
+        </template>
       </div>
+    </div>
     </div>
     </main>
   </div>
