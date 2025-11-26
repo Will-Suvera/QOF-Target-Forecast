@@ -1,41 +1,52 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen">
     <!-- Header -->
-    <header class="bg-blue-900 text-white shadow-lg">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <!-- Logo and Title -->
-          <div class="flex items-center space-x-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                <span class="text-blue-900 font-bold text-lg">Y</span>
+    <header class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex justify-between items-center h-14">
+          <!-- Left side - Brand and Navigation -->
+          <div class="flex items-center">
+            <!-- Logo -->
+            <div class="flex items-center mr-12">
+              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-purple-600 flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
               </div>
-              <div>
-                <h1 class="text-xl font-bold">Suvera workload dashboard</h1>
-              </div>
+              <span class="text-lg font-bold text-gray-900">QOF Forecaster</span>
             </div>
+            
+            <!-- Navigation -->
+            <nav class="hidden md:flex space-x-8">
+              <a href="/" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                Dashboard
+              </a>
+              <a href="/summary" class="text-gray-900 font-semibold border-b-2 border-blue-600 px-1 pb-3 text-sm font-medium flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Summary
+              </a>
+              <a href="/pricing" class="text-gray-600 hover:text-gray-900 px-1 pb-3 text-sm font-medium flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                Pricing
+              </a>
+            </nav>
           </div>
 
-          <!-- Navigation -->
-          <nav class="flex items-center space-x-8">
-            <NuxtLink to="/" class="text-white hover:text-blue-200 transition-colors">
-              Suvera workload dashboard
-            </NuxtLink>
-            <NuxtLink to="/summary" class="text-white hover:text-blue-200 transition-colors">
-              Summary
-            </NuxtLink>
-            <NuxtLink to="/indicators" class="text-white hover:text-blue-200 transition-colors">
-              QOF Indicators
-            </NuxtLink>
-            <div class="text-white hover:text-blue-200 transition-colors cursor-pointer">
-              Referrals
-            </div>
-          </nav>
-
-          <!-- User Avatar -->
-          <div class="flex items-center space-x-4">
-            <div class="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center">
-              <span class="text-white text-sm font-medium">U</span>
+          <!-- Right side - User -->
+          <div class="flex items-center">
+            <!-- User Avatar -->
+            <div class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full flex items-center cursor-pointer hover:bg-gray-200">
+              <span class="text-sm font-medium mr-1">CG</span>
+              <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
             </div>
           </div>
         </div>
