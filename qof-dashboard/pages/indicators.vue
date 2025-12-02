@@ -56,46 +56,30 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div class="px-4 py-6 sm:px-0">
-        <!-- Welcome Section with Filter -->
+        <!-- Welcome Section -->
         <div class="mb-8 flex items-start justify-between">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Hello, Pilly 👋</h1>
         <div class="text-lg text-gray-600">{{ formattedDate }}</div>
       </div>
-          <!-- Filter Bar -->
+          <!-- Practice Information Card -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-5 py-4">
+            <div class="grid grid-cols-2 gap-x-8 gap-y-3">
           <div class="flex items-center">
-            <button class="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mr-4">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-              </svg>
-              Filter
-            </button>
-            <div class="flex items-center space-x-4">
-              <div class="flex items-center">
-                <label class="text-sm text-gray-700 mr-2">Practice:</label>
-                <select class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                  <option>The Medical Practice</option>
-                  <option>Maltings Surgery</option>
-                  <option>Summerfield Health Center</option>
-                </select>
+                <span class="text-xs font-medium text-gray-500 w-32">GP Practice Name:</span>
+                <span class="text-sm font-normal text-gray-900">Maltings Surgery (E82031)</span>
               </div>
               <div class="flex items-center">
-                <label class="text-sm text-gray-700 mr-2">Target area:</label>
-                <select class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                  <option>All</option>
-                  <option>Asthma</option>
-                  <option>Hypertension</option>
-                  <option>Cholesterol</option>
-                  <option>Diabetes</option>
-                  <option>COPD</option>
-                  <option>Heart Failure</option>
-                  <option>Atrial Fibrillation</option>
-                  <option>Coronary Heart Disease</option>
-                  <option>Dementia</option>
-                  <option>Mental Health</option>
-                  <option>NDH</option>
-                  <option>Stroke and TIA</option>
-                </select>
+                <span class="text-xs font-medium text-gray-500 w-28">PCN Name:</span>
+                <span class="text-sm font-normal text-gray-900">Abbey Health PCN (U06079)</span>
+              </div>
+              <div class="flex items-center">
+                <span class="text-xs font-medium text-gray-500 w-32">ICB Name:</span>
+                <span class="text-sm font-normal text-gray-900">NHS Hertfordshire and West Essex ICB (06N)</span>
+              </div>
+              <div class="flex items-center">
+                <span class="text-xs font-medium text-gray-500 w-32">Patient List Size:</span>
+                <span class="text-sm font-semibold text-gray-900">19,026</span>
               </div>
             </div>
           </div>
@@ -144,18 +128,801 @@
                 </div>
               </div>
               
-      <!-- QOF Target Cards -->
+      <!-- Summary Section for Hypertension -->
+      <template v-if="conditionData.title === 'Hypertension'">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="flex justify-between items-center mb-6 relative">
+            <h3 class="text-xl font-semibold text-gray-900">Summary</h3>
+            
+            <!-- Hypertension Register Prevalence Card (Centered) -->
+            <div class="absolute left-1/2 transform -translate-x-1/2">
+              <div class="bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
+                <div class="text-xs text-gray-600 mb-1">Hypertension Register Prevalence</div>
+                <div class="flex items-baseline gap-3">
+                  <div>
+                    <span class="text-xs text-gray-500">Current:</span>
+                    <span class="text-sm font-bold text-gray-900 ml-1">10.33%</span>
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">Sub ICB:</span>
+                    <span class="text-sm font-bold text-gray-900 ml-1">14.17%</span>
+                    <span class="text-xs text-red-600 ml-1">(-3.84%)</span>
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">National:</span>
+                    <span class="text-sm font-bold text-gray-900 ml-1">14.8%</span>
+                    <span class="text-xs text-red-600 ml-1">(-4.47%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- View in Planner Button -->
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              View in Planner
+            </button>
+          </div>
+          
+          <!-- Legend - Bar Segments and Vertical Lines on same row -->
+          <div class="flex flex-wrap items-center gap-4 mb-6">
+            <!-- Bar Segment Labels -->
+            <div class="flex items-center">
+              <div class="w-4 h-4 bg-green-600 rounded mr-2"></div>
+              <span class="text-sm text-gray-700">Clinically complete</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-4 h-4 bg-gray-300 rounded mr-2"></div>
+              <span class="text-sm text-gray-700">Exception reported - invited</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-4 h-4 bg-blue-600 rounded mr-2"></div>
+              <span class="text-sm text-gray-700">Incomplete</span>
+            </div>
+            
+            <!-- Vertical Lines Legend (in line with bar segment labels) -->
+            <div class="flex items-center">
+              <div class="w-4 h-4 border-l-2 border-dashed border-red-500 mr-2"></div>
+              <span class="text-sm text-gray-700">Min achievement (40%)</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-4 h-4 border-l-2 border-dashed border-purple-500 mr-2"></div>
+              <span class="text-sm text-gray-700">Expected by today</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-4 h-4 border-l-2 border-dashed border-green-500 mr-2"></div>
+              <span class="text-sm text-gray-700">Max achievement (85%)</span>
+            </div>
+          </div>
+          
+          <!-- Stacked Bar Chart -->
       <div class="space-y-6">
-        <div 
-          v-for="(target, index) in targetCards" 
-          :key="target.qofCode || target.code"
-          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            <!-- HYP008 Bar -->
+            <div>
+              <div class="flex items-center mb-2">
+                <button 
+                  @click="toggleAccordion('HYP008')"
+                  class="flex items-center text-sm font-medium text-gray-900 w-24 hover:text-blue-600 transition-colors"
+                >
+                  <svg 
+                    class="w-4 h-4 mr-1 transition-transform"
+                    :class="{ 'rotate-90': expandedSections.HYP008 }"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                  HYP008
+                </button>
+                <div class="flex-1 relative bg-gray-100 rounded overflow-visible cursor-pointer" style="padding-bottom: 30px;" @click="toggleAccordion('HYP008')">
+                  <!-- Bar container -->
+                  <div class="relative h-8">
+                    <!-- Complete -->
+                    <div 
+                      class="absolute left-0 top-0 h-full bg-green-600 flex items-center justify-center" 
+                      :style="`width: ${getSummaryData('HYP008').complete}%`"
+                    >
+                      <span class="text-xs font-semibold text-white">{{ getSummaryData('HYP008').complete }}% ({{ getSummaryData('HYP008').completePatients }})</span>
+                    </div>
+                    <!-- Exception reported - invited -->
+                    <div 
+                      class="absolute h-full bg-gray-300 flex items-center justify-center" 
+                      :style="`left: ${getSummaryData('HYP008').complete}%; width: ${getSummaryData('HYP008').exceptionInvited}%`"
+                    >
+                      <span class="text-xs font-semibold text-gray-700">{{ getSummaryData('HYP008').exceptionInvited }}% ({{ getSummaryData('HYP008').exceptionInvitedPatients }})</span>
+                    </div>
+                    <!-- Incomplete -->
+                    <div 
+                      class="absolute right-0 top-0 h-full bg-blue-600 flex items-center justify-center" 
+                      :style="`width: ${getSummaryData('HYP008').incomplete}%`"
+                    >
+                      <span class="text-xs font-semibold text-white">{{ getSummaryData('HYP008').incomplete }}% ({{ getSummaryData('HYP008').incompletePatients }})</span>
+                    </div>
+                    
+                    <!-- Min Achievement Threshold (40%) - Red -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      style="left: 40%; width: 0;"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-red-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-red-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-red-500 rotate-45"></div>
+                    </div>
+                    
+                    <!-- Max Achievement Threshold (85%) - Green -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      style="left: 85%; width: 0;"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-green-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-green-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-green-500 rotate-45"></div>
+                    </div>
+                    
+                    <!-- Expected by Today - Purple -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      :style="`left: ${getExpectedAchievementForSummary()}%; width: 0;`"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-purple-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-purple-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-purple-500 rotate-45"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- X-axis for percentage complete -->
+                  <div class="absolute bottom-0 left-0 right-0" style="height: 30px;">
+                    <div class="relative w-full h-full">
+                      <template v-for="(percent, index) in [0, 20, 40, 60, 80, 100]" :key="index">
+                        <div class="absolute flex flex-col items-center" :style="`left: ${percent}%; transform: translateX(-50%);`">
+                          <div class="w-0.5 h-2 bg-gray-400 mb-1"></div>
+                          <span class="text-xs text-gray-600 font-medium">{{ percent }}%</span>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Expanded HYP008 Content -->
+              <div v-show="expandedSections.HYP008" class="mt-6 -mx-6 -mb-6">
+                <div class="bg-white border-t border-gray-200">
+                  <div 
+                    v-for="(target, index) in targetCards.filter(t => t.code === 'HYP008' || t.qofCode === 'QOF_HYP008')" 
+                    :key="`inline-${target.qofCode || target.code}`"
+                    class="p-6"
+                  >
+                    <!-- Reuse the same target card structure -->
+        <div class="mb-6">
+              <div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ target.qofCode || conditionData.qofCode }}</h3>
+              <p class="text-sm text-gray-600">{{ target.description || conditionData.description }}</p>
+                </div>
+        </div>
+        <!-- Target Achievement Progress and Revenue Row (Row 1) -->
+                    <template v-if="(target.code === 'HYP008' || target.qofCode === 'QOF_HYP008')">
+                      <!-- Copy the full target card content from the main section (lines 361-650+) -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Target Achievement Progress (takes 2 columns) -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">Target Achievement Progress</h4>
+              
+              <!-- 4 Sections Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- HYP008 Register Size -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">HYP008 Register Size</div>
+                  <div class="text-2xl font-bold text-gray-900 mb-3">{{ getHYP008RegisterSize() }}</div>
+                  <div class="text-xs text-gray-600">
+                    <div class="flex items-center justify-between mb-1">
+                      <span>Nov 1st:</span>
+                      <span>{{ getHYP008RegisterSizePrevious() }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>Change:</span>
+                      <span :class="getChangeClass(getHYP008RegisterSizeChange())">
+                        {{ getHYP008RegisterSizeChange() > 0 ? '+' : '' }}{{ getHYP008RegisterSizeChange() }} ({{ getHYP008RegisterSizeChangePercent() > 0 ? '+' : '' }}{{ getHYP008RegisterSizeChangePercent() }}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Clinical Completion Number -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">Clinical Completion Number</div>
+                  <div class="text-2xl font-bold text-gray-900 mb-3">{{ getClinicalCompletionNumber(target) }}</div>
+                  <div class="text-xs text-gray-600">
+                    <div class="flex items-center justify-between mb-1">
+                      <span>Nov 1st:</span>
+                      <span>{{ getClinicalCompletionNumberPrevious(target) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>Change:</span>
+                      <span :class="getChangeClass(getClinicalCompletionNumberChange(target))">
+                        {{ getClinicalCompletionNumberChange(target) > 0 ? '+' : '' }}{{ getClinicalCompletionNumberChange(target) }} ({{ getClinicalCompletionNumberChangePercent(target) > 0 ? '+' : '' }}{{ getClinicalCompletionNumberChangePercent(target) }}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Invited Exception Reporting Number -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">Invited Exception Reporting Number</div>
+                  <div class="text-2xl font-bold text-gray-900 mb-3">{{ getInvitedExceptionNumber(target) }}</div>
+                  <div class="text-xs text-gray-600">
+                    <div class="flex items-center justify-between mb-1">
+                      <span>Nov 1st:</span>
+                      <span>{{ getInvitedExceptionNumberPrevious(target) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>Change:</span>
+                      <span :class="getChangeClass(getInvitedExceptionNumberChange(target))">
+                        {{ getInvitedExceptionNumberChange(target) > 0 ? '+' : '' }}{{ getInvitedExceptionNumberChange(target) }} ({{ getInvitedExceptionNumberChangePercent(target) > 0 ? '+' : '' }}{{ getInvitedExceptionNumberChangePercent(target) }}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Not Yet Invited Number -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">Not Yet Invited Number</div>
+                  <div class="text-2xl font-bold text-gray-900 mb-3">{{ getNotYetInvitedNumber(target) }}</div>
+                  <div class="text-xs text-gray-600">
+                    <div class="flex items-center justify-between mb-1">
+                      <span>Nov 1st:</span>
+                      <span>{{ getNotYetInvitedNumberPrevious(target) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>Change:</span>
+                      <span :class="getNotYetInvitedChangeClass(getNotYetInvitedNumberChange(target))">
+                        {{ getNotYetInvitedNumberChange(target) > 0 ? '+' : '' }}{{ getNotYetInvitedNumberChange(target) }} ({{ getNotYetInvitedNumberChangePercent(target) > 0 ? '+' : '' }}{{ getNotYetInvitedNumberChangePercent(target) }}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+                        <!-- Revenue Left on Table (takes 1 column) -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-4">Revenue Left on Table</h4>
+                          <div class="text-4xl font-bold text-gray-900 mb-4">£{{ getRevenueLeftOnTable(target).toLocaleString() }}</div>
+                          <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
+                            <div class="flex items-start">
+                              <svg class="w-5 h-5 text-orange-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                              </svg>
+                              <div>
+                                <div class="text-sm font-medium text-orange-800">{{ getUnclaimedPoints(target) }} unclaimed QOF points from {{ getRemainingPatients(target) }} patients</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white border border-gray-200 rounded-lg p-3">
+                              <div class="text-xs text-gray-600 mb-1">Unclaimed Points</div>
+                              <div class="text-xl font-bold text-gray-900">{{ getUnclaimedPoints(target) }}</div>
+                            </div>
+                            <div class="bg-white border border-gray-200 rounded-lg p-3">
+                              <div class="text-xs text-gray-600 mb-1">Patients Remaining</div>
+                              <div class="text-xl font-bold text-gray-900">{{ getRemainingPatients(target) }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Clinical, Exception, and Resource Planning Row (Row 2) -->
+                      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Clinical Completion Analysis -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-1">Clinical Completion Analysis</h4>
+                          <p class="text-sm text-gray-600 mb-4">Patients clinically complete</p>
+                          
+                          <div class="space-y-3 mb-4">
+                            <!-- Current -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Current</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getClinicalCompletionNumber(target) }} (54.4%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2" style="width: 54.4%;">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Last Year at this time of year -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year at this time of year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinicalAtThisTime(target) }} ({{ getLastYearClinicalAtThisTimePercent(target) }}%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getLastYearClinicalAtThisTimePercent(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Last Year Total -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year Total</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinicalTotal(target) }} (62.52%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: 62.52%`">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sub ICB Comparison Bars -->
+                          <div class="space-y-3 mb-4">
+                            <!-- Sub ICB Completion at this time of year -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Sub ICB Completion at this time of year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getSubICBClinicalCompletionAtThisTime(target) }}%</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBClinicalCompletionAtThisTime(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Sub ICB Total Completion -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Sub ICB Total Completion</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getSubICBClinicalCompletionAverage(target) }}%</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBClinicalCompletionAverage(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Exception Reporting Analysis -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-1">Exception Reporting Analysis</h4>
+                          <p class="text-sm text-gray-600 mb-4">Patients exception reported</p>
+                          
+                          <div class="space-y-3 mb-4">
+                            <!-- Current -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Current</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getInvitedExceptionNumber(target) }} ({{ getSummaryData('HYP008').exceptionInvited }}%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-green-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSummaryData('HYP008').exceptionInvited}%`">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Last Year at this time of year -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year at this time of year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearExceptionAtThisTime(target) }} ({{ getLastYearExceptionAtThisTimePercent(target) }}%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getLastYearExceptionAtThisTimePercent(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Last Year Total -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year Total</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearExceptionTotal(target) }} (19.72%)</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: 19.72%`">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sub ICB Comparison Bars -->
+                          <div class="space-y-3 mb-4">
+                            <!-- Sub ICB Exception Reporting at this time of year -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Sub ICB Exception Reporting at this time of year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getSubICBExceptionReportingAtThisTime(target) }}%</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBExceptionReportingAtThisTime(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Sub ICB Total Exception Reporting -->
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Sub ICB Total Exception Reporting</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getSubICBExceptionReportingAverage(target) }}%</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBExceptionReportingAverage(target)}%`">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Resource Planning -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-4">Resource Planning</h4>
+                          <div class="text-3xl font-bold text-gray-900 mb-2">{{ getRemainingPatients(target).toLocaleString() }} appointments</div>
+                          <div class="text-sm text-gray-600 mb-6">needed to reach 100% clinical completion</div>
+                          
+                          <div class="space-y-3 mb-4">
+                            <div class="flex justify-between items-center">
+                              <span class="text-sm text-gray-600">Traditional Cost:</span>
+                              <span class="text-lg font-semibold text-gray-900">£{{ getTraditionalCost(target).toLocaleString() }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                              <span class="text-sm text-gray-600">Suvera Cost ★:</span>
+                              <span class="text-lg font-semibold text-green-600">£{{ getSuveraCost(target).toLocaleString() }}</span>
+                            </div>
+                          </div>
+                          
+                          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="text-sm font-semibold text-green-800 mb-1">Potential Savings:</div>
+                            <div class="text-2xl font-bold text-green-600">£{{ getPotentialSavings(target).toLocaleString() }}</div>
+                            <div class="text-xs text-green-700 mt-1">Save {{ getSavingsPercentage(target) }}% with Suvera virtual clinic</div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- HYP009 Bar -->
+            <div>
+              <div class="flex items-center mb-2">
+                <button 
+                  @click="toggleAccordion('HYP009')"
+                  class="flex items-center text-sm font-medium text-gray-900 w-24 hover:text-blue-600 transition-colors"
+                >
+                  <svg 
+                    class="w-4 h-4 mr-1 transition-transform"
+                    :class="{ 'rotate-90': expandedSections.HYP009 }"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                  HYP009
+                </button>
+                <div class="flex-1 relative bg-gray-100 rounded overflow-visible cursor-pointer" style="padding-bottom: 30px;" @click="toggleAccordion('HYP009')">
+                  <!-- Bar container -->
+                  <div class="relative h-8">
+                    <!-- Complete -->
+                    <div 
+                      class="absolute left-0 top-0 h-full bg-green-600 flex items-center justify-center" 
+                      :style="`width: ${getSummaryData('HYP009').complete}%`"
+                    >
+                      <span class="text-xs font-semibold text-white">{{ getSummaryData('HYP009').complete }}% ({{ getSummaryData('HYP009').completePatients }})</span>
+                    </div>
+                    <!-- Exception reported - invited -->
+                    <div 
+                      class="absolute h-full bg-gray-300 flex items-center justify-center" 
+                      :style="`left: ${getSummaryData('HYP009').complete}%; width: ${getSummaryData('HYP009').exceptionInvited}%`"
+                    >
+                      <span class="text-xs font-semibold text-gray-700">{{ getSummaryData('HYP009').exceptionInvited }}% ({{ getSummaryData('HYP009').exceptionInvitedPatients }})</span>
+                    </div>
+                    <!-- Incomplete -->
+                    <div 
+                      class="absolute right-0 top-0 h-full bg-blue-600 flex items-center justify-center" 
+                      :style="`width: ${getSummaryData('HYP009').incomplete}%`"
+                    >
+                      <span class="text-xs font-semibold text-white">{{ getSummaryData('HYP009').incomplete }}% ({{ getSummaryData('HYP009').incompletePatients }})</span>
+            </div>
+            
+                    <!-- Min Achievement Threshold (40%) - Red -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      style="left: 40%; width: 0;"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-red-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-red-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-red-500 rotate-45"></div>
+              </div>
+                    
+                    <!-- Max Achievement Threshold (85%) - Green -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      style="left: 85%; width: 0;"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-green-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-green-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-green-500 rotate-45"></div>
+                    </div>
+                    
+                    <!-- Expected by Today - Purple -->
+                    <div 
+                      class="absolute top-0 bottom-0 pointer-events-none z-10"
+                      :style="`left: ${getExpectedAchievementForSummary()}%; width: 0;`"
+                    >
+                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-purple-500"></div>
+                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-purple-500 rotate-45"></div>
+                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-purple-500 rotate-45"></div>
+                    </div>
+            </div>
+                    
+                  <!-- X-axis for percentage complete -->
+                  <div class="absolute bottom-0 left-0 right-0" style="height: 30px;">
+                    <div class="relative w-full h-full">
+                      <template v-for="(percent, index) in [0, 20, 40, 60, 80, 100]" :key="index">
+                        <div class="absolute flex flex-col items-center" :style="`left: ${percent}%; transform: translateX(-50%);`">
+                          <div class="w-0.5 h-2 bg-gray-400 mb-1"></div>
+                          <span class="text-xs text-gray-600 font-medium">{{ percent }}%</span>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+            </div>
+                    
+              <!-- Expanded HYP009 Content -->
+              <div v-show="expandedSections.HYP009" class="mt-6 -mx-6 -mb-6">
+                <div class="bg-white border-t border-gray-200">
+                  <div 
+                    v-for="(target, index) in targetCards.filter(t => t.code === 'HYP009' || t.qofCode === 'QOF_HYP009')" 
+                    :key="`inline-${target.qofCode || target.code}`"
+                    class="p-6"
         >
         <div class="flex justify-between items-start mb-6">
               <div>
               <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ target.qofCode || conditionData.qofCode }}</h3>
               <p class="text-sm text-gray-600">{{ target.description || conditionData.description }}</p>
                 </div>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            View in Planner
+          </button>
+        </div>
+        <!-- Target Achievement Progress and Revenue Row (Row 1) -->
+                    <template v-if="(target.code === 'HYP009' || target.qofCode === 'QOF_HYP009')">
+                      <!-- Same full content structure as HYP008 - the template from lines 249-548 applies here too -->
+                      <!-- The content is identical, just using different target data -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Target Achievement Progress (takes 2 columns) -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">Target Achievement Progress</h4>
+              
+              <div class="flex flex-col lg:flex-row items-start gap-6">
+                <!-- Left: Donut Chart -->
+                <div class="flex items-center flex-shrink-0">
+                  <div class="relative w-32 h-32">
+                    <svg class="transform -rotate-90 w-32 h-32">
+                      <circle cx="64" cy="64" r="56" fill="none" stroke="#e5e7eb" stroke-width="12"></circle>
+                      <circle 
+                        cx="64" 
+                        cy="64" 
+                        r="56" 
+                        fill="none" 
+                        stroke="#3b82f6" 
+                        stroke-width="12"
+                        :stroke-dasharray="`${(getTargetProgress(target) / 100) * 351.86} 351.86`"
+                        stroke-linecap="round"
+                      ></circle>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-900">{{ Math.round(getTargetProgress(target)) }}%</div>
+                        <div class="text-xs text-gray-600">of target</div>
+                                    <div class="text-xs font-semibold text-blue-600 mt-1">{{ getQOFPoints(target) }} / {{ getMaxQOFPoints(target) }} points</div>
+                      </div>
+                </div>
+              </div>
+            </div>
+            
+                            <!-- Target Breakdown -->
+                <div class="flex-1">
+                              <div class="grid grid-cols-3 gap-3 mt-4">
+                                <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                  <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                                    <span class="text-xs font-medium text-gray-700">Clinical</span>
+                                  </div>
+                                  <div class="text-lg font-bold text-gray-900">{{ getClinicalCompletionPatients(target).toLocaleString() }}</div>
+                                  <div class="text-xs text-gray-600">{{ Math.round((getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% of target</div>
+                                </div>
+                                <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                  <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-xs font-medium text-gray-700">Exception</span>
+                                  </div>
+                                  <div class="text-lg font-bold text-gray-900">{{ getExceptionReportingPatients(target).toLocaleString() }}</div>
+                                  <div class="text-xs text-gray-600">{{ Math.round((getExceptionReportingPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% of target</div>
+                                </div>
+                                <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                  <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                    <span class="text-xs font-medium text-gray-700">Remaining</span>
+                                  </div>
+                                  <div class="text-lg font-bold text-gray-900">{{ (getPatientNumbers(target, getActualCompletion(target)).totalRegister - getClinicalCompletionPatients(target) - getExceptionReportingPatients(target)).toLocaleString() }}</div>
+                                  <div class="text-xs text-gray-600">{{ Math.round(((getPatientNumbers(target, getActualCompletion(target)).totalRegister - getClinicalCompletionPatients(target) - getExceptionReportingPatients(target)) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% to go</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+            </div>
+            
+                        <!-- Revenue Left on Table -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-4">Revenue Left on Table</h4>
+                          <div class="text-4xl font-bold text-gray-900 mb-4">£{{ getRevenueLeftOnTable(target).toLocaleString() }}</div>
+                          <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
+                            <div class="flex items-start">
+                              <svg class="w-5 h-5 text-orange-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                              </svg>
+                              <div>
+                                <div class="text-sm font-medium text-orange-800">{{ getUnclaimedPoints(target) }} unclaimed QOF points from {{ getRemainingPatients(target) }} patients</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white border border-gray-200 rounded-lg p-3">
+                              <div class="text-xs text-gray-600 mb-1">Unclaimed Points</div>
+                              <div class="text-xl font-bold text-gray-900">{{ getUnclaimedPoints(target) }}</div>
+                            </div>
+                            <div class="bg-white border border-gray-200 rounded-lg p-3">
+                              <div class="text-xs text-gray-600 mb-1">Patients Remaining</div>
+                              <div class="text-xl font-bold text-gray-900">{{ getRemainingPatients(target) }}</div>
+                            </div>
+                          </div>
+                        </div>
+              </div>
+                    
+                      <!-- Clinical, Exception, and Resource Planning Row (Row 2) -->
+                      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Clinical Completion Analysis -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-1">Clinical Completion Analysis</h4>
+                          <p class="text-sm text-gray-600 mb-4">Patients clinically complete</p>
+                          <div class="space-y-3">
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Current</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getClinicalCompletionPatients(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getClinicalCompletionPatients(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Expected</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getExpectedClinical(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExpectedClinical(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinical(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getLastYearClinical(target) / Math.max(getExpectedClinical(target), getLastYearClinical(target), getClinicalCompletionPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                          </div>
+            </div>
+                    
+                        <!-- Exception Reporting Analysis -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-1">Exception Reporting Analysis</h4>
+                          <p class="text-sm text-gray-600 mb-4">Patients exception reported</p>
+                          <div class="space-y-3 mb-4">
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Current</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getExceptionReportingPatients(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-green-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExceptionReportingPatients(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Expected</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getExpectedException(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getExpectedException(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                            <div>
+                              <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">Last Year</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ getLastYearException(target).toLocaleString() }}</span>
+                              </div>
+                              <div class="w-full bg-gray-200 rounded-full h-6">
+                                <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${Math.min((getLastYearException(target) / Math.max(getExpectedException(target), getLastYearException(target), getExceptionReportingPatients(target))) * 100, 100)}%`"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="bg-white border border-gray-200 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                              <span class="text-sm text-gray-600">Your exception rate:</span>
+                              <span class="text-sm font-semibold text-gray-900">{{ getExceptionRate(target) }}%</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                              <span class="text-sm text-gray-600">ICB Avg:</span>
+                              <span class="text-sm font-semibold text-green-600 flex items-center">
+                                {{ getSubICBAverage(target) }}%
+                                <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Resource Planning -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                          <h4 class="text-lg font-semibold text-gray-900 mb-4">Resource Planning</h4>
+                          <div class="text-3xl font-bold text-gray-900 mb-2">{{ getRemainingPatients(target).toLocaleString() }} appointments</div>
+                          <div class="text-sm text-gray-600 mb-6">needed to reach 100% clinical completion</div>
+                          <div class="space-y-3 mb-4">
+                            <div class="flex justify-between items-center">
+                              <span class="text-sm text-gray-600">Traditional Cost:</span>
+                              <span class="text-lg font-semibold text-gray-900">£{{ getTraditionalCost(target).toLocaleString() }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                              <span class="text-sm text-gray-600">Suvera Cost ★:</span>
+                              <span class="text-lg font-semibold text-green-600">£{{ getSuveraCost(target).toLocaleString() }}</span>
+                            </div>
+                          </div>
+                          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="text-sm font-semibold text-green-800 mb-1">Potential Savings:</div>
+                            <div class="text-2xl font-bold text-green-600">£{{ getPotentialSavings(target).toLocaleString() }}</div>
+                            <div class="text-xs text-green-700 mt-1">Save {{ getSavingsPercentage(target) }}% with Suvera virtual clinic</div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+              
+      <!-- QOF Target Cards -->
+      <div class="space-y-6">
+        <div 
+          v-for="(target, index) in targetCards" 
+          :key="target.qofCode || target.code"
+          v-show="shouldShowTarget(target)"
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+        <div class="flex justify-between items-start mb-6">
+              <div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ target.qofCode || conditionData.qofCode }}</h3>
+              <p class="text-sm text-gray-600">{{ target.description || conditionData.description }}</p>
+          </div>
           <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -203,72 +970,6 @@
             
                 <!-- Target Breakdown (next to circle) -->
                 <div class="flex-1">
-                  <div class="text-sm font-medium text-gray-700 mb-2">Target Breakdown</div>
-                  <!-- Horizontal Progress Bar Container with markers -->
-                  <div class="relative py-2">
-                    <!-- Progress Bar -->
-                    <div class="relative h-8 bg-gray-100 rounded-full overflow-hidden">
-                      <!-- Clinical segment (blue) -->
-                      <div 
-                        class="absolute left-0 top-0 bottom-0 bg-blue-600"
-                        :style="`width: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                      ></div>
-                      <!-- Exception segment (green) -->
-                      <div 
-                        class="absolute top-0 bottom-0 bg-green-500"
-                        :style="`left: ${(getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%; width: ${(getExceptionReportingPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                      ></div>
-                      <!-- Remaining segment (grey) -->
-                      <div 
-                        class="absolute right-0 top-0 bottom-0 bg-gray-300"
-                        :style="`width: ${((getPatientNumbers(target, getActualCompletion(target)).totalRegister - getClinicalCompletionPatients(target) - getExceptionReportingPatients(target)) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100}%`"
-                      ></div>
-            </div>
-            
-                    <!-- Minimum Achievement Threshold Marker -->
-                    <div 
-                      class="absolute top-0 bottom-0 pointer-events-none"
-                      :style="`left: ${getMinAchievementForTarget(target)}%; width: 0;`"
-                    >
-                      <!-- Label above -->
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 text-xs font-medium text-red-600 whitespace-nowrap">Min Achievement Threshold</div>
-                      <!-- Dashed line through full height -->
-                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-red-500"></div>
-                      <!-- Diamond above -->
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-red-500 rotate-45"></div>
-                      <!-- Diamond below -->
-                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2.5 h-2.5 bg-red-500 rotate-45"></div>
-              </div>
-                    
-                    <!-- Expected by Today Marker -->
-                    <div 
-                      class="absolute top-0 bottom-0 pointer-events-none"
-                      :style="`left: ${getExpectedAchievement(target)}%; width: 0;`"
-                    >
-                      <!-- Dashed line through full height -->
-                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-purple-500"></div>
-                      <!-- Diamond above -->
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-purple-500 rotate-45"></div>
-                      <!-- Label below -->
-                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 text-xs font-medium text-purple-600 whitespace-nowrap">Expected by Today</div>
-                    </div>
-                    
-                    <!-- Maximum Achievement Threshold Marker -->
-                    <div 
-                      class="absolute top-0 bottom-0 pointer-events-none"
-                      :style="`left: ${getMaxAchievement(target)}%; width: 0;`"
-                    >
-                      <!-- Label above -->
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6 text-xs font-medium text-green-600 whitespace-nowrap">Max Achievement Threshold</div>
-                      <!-- Dashed line through full height -->
-                      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-green-500"></div>
-                      <!-- Diamond above -->
-                      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2.5 h-2.5 bg-green-500 rotate-45"></div>
-                      <!-- Diamond below -->
-                      <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2.5 h-2.5 bg-green-500 rotate-45"></div>
-          </div>
-        </div>
-
                   <!-- Breakdown Cards -->
                   <div class="grid grid-cols-3 gap-3 mt-4">
                     <!-- Clinical Card -->
@@ -276,7 +977,7 @@
                       <div class="flex items-center gap-2 mb-1">
                         <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
                         <span class="text-xs font-medium text-gray-700">Clinical</span>
-                      </div>
+            </div>
                       <div class="text-lg font-bold text-gray-900">{{ getClinicalCompletionPatients(target).toLocaleString() }}</div>
                       <div class="text-xs text-gray-600">{{ Math.round((getClinicalCompletionPatients(target) / getPatientNumbers(target, getActualCompletion(target)).totalRegister) * 100 * 10) / 10 }}% of target</div>
             </div>
@@ -339,6 +1040,75 @@
               <h4 class="text-lg font-semibold text-gray-900 mb-1">Clinical Completion Analysis</h4>
               <p class="text-sm text-gray-600 mb-4">Patients clinically complete</p>
               
+              <template v-if="target.code === 'HYP008' || target.qofCode === 'QOF_HYP008'">
+                <div class="space-y-3 mb-4">
+                  <!-- Current -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Current</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getClinicalCompletionNumber(target) }} (54.4%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2" style="width: 54.4%;">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Last Year at this time of year -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Last Year at this time of year</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinicalAtThisTime(target) }} ({{ getLastYearClinicalAtThisTimePercent(target) }}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getLastYearClinicalAtThisTimePercent(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Last Year Total -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Last Year Total</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getLastYearClinicalTotal(target) }} (62.52%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: 62.52%`">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub ICB Comparison Bars -->
+                <div class="space-y-3 mb-4">
+                  <!-- Sub ICB Completion at this time of year -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Sub ICB Completion at this time of year</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getSubICBClinicalCompletionAtThisTime(target) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBClinicalCompletionAtThisTime(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Sub ICB Total Completion -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Sub ICB Total Completion</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getSubICBClinicalCompletionAverage(target) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBClinicalCompletionAverage(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <template v-else>
+                <!-- Original layout for other targets -->
               <div class="space-y-3">
                 <!-- Current -->
           <div>
@@ -376,6 +1146,7 @@
                 </div>
               </div>
             </div>
+              </template>
           </div>
 
             <!-- Exception Reporting Analysis -->
@@ -383,6 +1154,75 @@
               <h4 class="text-lg font-semibold text-gray-900 mb-1">Exception Reporting Analysis</h4>
               <p class="text-sm text-gray-600 mb-4">Patients exception reported</p>
               
+              <template v-if="target.code === 'HYP008' || target.qofCode === 'QOF_HYP008'">
+                <div class="space-y-3 mb-4">
+                  <!-- Current -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Current</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getInvitedExceptionNumber(target) }} ({{ getSummaryData('HYP008').exceptionInvited }}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-green-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSummaryData('HYP008').exceptionInvited}%`">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Last Year at this time of year -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Last Year at this time of year</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getLastYearExceptionAtThisTime(target) }} ({{ getLastYearExceptionAtThisTimePercent(target) }}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getLastYearExceptionAtThisTimePercent(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Last Year Total -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Last Year Total</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getLastYearExceptionTotal(target) }} (19.72%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-gray-400 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: 19.72%`">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub ICB Comparison Bars -->
+                <div class="space-y-3 mb-4">
+                  <!-- Sub ICB Exception Reporting at this time of year -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Sub ICB Exception Reporting at this time of year</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getSubICBExceptionReportingAtThisTime(target) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBExceptionReportingAtThisTime(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Sub ICB Total Exception Reporting -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-medium text-gray-700">Sub ICB Total Exception Reporting</span>
+                      <span class="text-sm font-semibold text-gray-900">{{ getSubICBExceptionReportingAverage(target) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                      <div class="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2" :style="`width: ${getSubICBExceptionReportingAverage(target)}%`">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              
+              <template v-else>
+                <!-- Original layout for other targets -->
               <div class="space-y-3 mb-4">
                 <!-- Current -->
           <div>
@@ -437,6 +1277,7 @@
                   </span>
                   </div>
                 </div>
+              </template>
               </div>
               
             <!-- Resource Planning -->
@@ -491,6 +1332,41 @@ const route = useRoute()
 // Toggle state for showing previous year comparison
 const showPreviousYear = ref(true)
 
+// Accordion state for summary section
+const expandedSections = ref({
+  HYP008: false,
+  HYP009: false
+})
+
+// Toggle accordion section
+const toggleAccordion = (section) => {
+  expandedSections.value[section] = !expandedSections.value[section]
+}
+
+// Check if target should be shown (only for hypertension, based on accordion state)
+const shouldShowTarget = (target) => {
+  // For non-hypertension conditions, always show
+  if (conditionData.value.title !== 'Hypertension') {
+    return true
+  }
+  
+  // For hypertension, hide from main section if shown in summary accordion
+  const targetCode = target.code || target.qofCode
+  if (targetCode === 'HYP008' || targetCode === 'QOF_HYP008') {
+    return false // Always hide from main section, show in accordion
+  }
+  if (targetCode === 'HYP009' || targetCode === 'QOF_HYP009') {
+    return false // Always hide from main section, show in accordion
+  }
+  
+  return true
+}
+
+// Get target by code
+const getTargetByCode = (code) => {
+  return targetCards.value.find(t => t.code === code || t.qofCode === `QOF_${code}`)
+}
+
 // Condition data mapping
 const conditionMap = {
   'asthma': {
@@ -498,9 +1374,30 @@ const conditionMap = {
     qofCode: 'QOF_AST0077',
     description: 'Asthma review including control score, number of exacerbations, inhaler technique and written plan (Asthma)',
     targets: [
-      { code: 'AST0077', name: 'Targets AST0077' },
-      { code: 'AST005', name: 'Targets AST005' },
+      { code: 'AST007', name: 'Targets AST007' },
       { code: 'AST012', name: 'Targets AST012' }
+    ],
+    targetDetails: [
+      {
+        code: 'AST007',
+        qofCode: 'QOF_AST007',
+        description: 'Asthma management target AST007',
+        minThreshold: 45,
+        maxThreshold: 70,
+        maxPoints: 20,
+        currentPoints: 20,
+        totalCompletion: 76
+      },
+      {
+        code: 'AST012',
+        qofCode: 'QOF_AST012',
+        description: 'Asthma management target AST012',
+        minThreshold: 45,
+        maxThreshold: 80,
+        maxPoints: 15,
+        currentPoints: 15,
+        totalCompletion: 88
+      }
     ]
   },
   'hypertension': {
@@ -515,12 +1412,22 @@ const conditionMap = {
       {
         code: 'HYP008',
         qofCode: 'QOF_HYP008',
-        description: 'The percentage of patients aged 79 years or under with hypertension in whom the last blood pressure reading (measured in the preceding 12 months) is 140/90 mmHg or less (or equivalent home blood pressure reading)'
+        description: 'The percentage of patients aged 79 years or under with hypertension in whom the last blood pressure reading (measured in the preceding 12 months) is 140/90 mmHg or less (or equivalent home blood pressure reading)',
+        minThreshold: 40,
+        maxThreshold: 85,
+        maxPoints: 38,
+        currentPoints: 26.19,
+        totalCompletion: 71
       },
       {
         code: 'HYP009',
         qofCode: 'QOF_HYP009',
-        description: 'The percentage of patients aged 80 years or over with hypertension in whom the last blood pressure reading (measured in the preceding 12 months) is 150/90 mmHg or less (or equivalent home blood pressure reading)'
+        description: 'The percentage of patients aged 80 years or over with hypertension in whom the last blood pressure reading (measured in the preceding 12 months) is 150/90 mmHg or less (or equivalent home blood pressure reading)',
+        minThreshold: 40,
+        maxThreshold: 85,
+        maxPoints: 14,
+        currentPoints: 10.2,
+        totalCompletion: 73
       }
     ]
   },
@@ -529,7 +1436,30 @@ const conditionMap = {
     qofCode: 'QOF_CHL001',
     description: 'Cholesterol management including lipid profile monitoring and statin therapy',
     targets: [
-      { code: 'CHL001', name: 'Targets CHL001' }
+      { code: 'CHOL003', name: 'Targets CHOL003' },
+      { code: 'CHOL004', name: 'Targets CHOL004' }
+    ],
+    targetDetails: [
+      {
+        code: 'CHOL003',
+        qofCode: 'QOF_CHOL003',
+        description: 'Cholesterol management target CHOL003',
+        minThreshold: 70,
+        maxThreshold: 95,
+        maxPoints: 38,
+        currentPoints: 14.15,
+        totalCompletion: 79
+      },
+      {
+        code: 'CHOL004',
+        qofCode: 'QOF_CHOL004',
+        description: 'Cholesterol management target CHOL004',
+        minThreshold: 20,
+        maxThreshold: 50,
+        maxPoints: 44,
+        currentPoints: 44,
+        totalCompletion: 57
+      }
     ]
   },
   'diabetes': {
@@ -537,8 +1467,96 @@ const conditionMap = {
     qofCode: 'QOF_DIA001',
     description: 'Diabetes management including HbA1c monitoring, foot care, and eye screening',
     targets: [
-      { code: 'DIA001', name: 'Targets DIA001' },
-      { code: 'DIA003', name: 'Targets DIA003' }
+      { code: 'DM006', name: 'Targets DM006' },
+      { code: 'DM012', name: 'Targets DM012' },
+      { code: 'DM014', name: 'Targets DM014' },
+      { code: 'DM020', name: 'Targets DM020' },
+      { code: 'DM021', name: 'Targets DM021' },
+      { code: 'DM034', name: 'Targets DM034' },
+      { code: 'DM035', name: 'Targets DM035' },
+      { code: 'DM036', name: 'Targets DM036' }
+    ],
+    targetDetails: [
+      {
+        code: 'DM006',
+        qofCode: 'QOF_DM006',
+        description: 'Diabetes management target DM006',
+        minThreshold: 57,
+        maxThreshold: 97,
+        maxPoints: 3,
+        currentPoints: 1.41,
+        totalCompletion: 76
+      },
+      {
+        code: 'DM012',
+        qofCode: 'QOF_DM012',
+        description: 'Diabetes management target DM012',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 4,
+        currentPoints: 1.03,
+        totalCompletion: 60
+      },
+      {
+        code: 'DM014',
+        qofCode: 'QOF_DM014',
+        description: 'Diabetes management target DM014',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 11,
+        currentPoints: 11,
+        totalCompletion: 100
+      },
+      {
+        code: 'DM020',
+        qofCode: 'QOF_DM020',
+        description: 'Diabetes management target DM020',
+        minThreshold: 37,
+        maxThreshold: 75,
+        maxPoints: 17,
+        currentPoints: 8.59,
+        totalCompletion: 55
+      },
+      {
+        code: 'DM021',
+        qofCode: 'QOF_DM021',
+        description: 'Diabetes management target DM021',
+        minThreshold: 52,
+        maxThreshold: 92,
+        maxPoints: 10,
+        currentPoints: 5.75,
+        totalCompletion: 75
+      },
+      {
+        code: 'DM034',
+        qofCode: 'QOF_DM034',
+        description: 'Diabetes management target DM034',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 4,
+        currentPoints: 2.31,
+        totalCompletion: 73
+      },
+      {
+        code: 'DM035',
+        qofCode: 'QOF_DM035',
+        description: 'Diabetes management target DM035',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 2,
+        currentPoints: 1.84,
+        totalCompletion: 87
+      },
+      {
+        code: 'DM036',
+        qofCode: 'QOF_DM036',
+        description: 'Diabetes management target DM036',
+        minThreshold: 38,
+        maxThreshold: 90,
+        maxPoints: 27,
+        currentPoints: 18.3,
+        totalCompletion: 73
+      }
     ]
   },
   'copd': {
@@ -546,7 +1564,19 @@ const conditionMap = {
     qofCode: 'QOF_COPD001',
     description: 'COPD management including spirometry, smoking cessation, and inhaler technique',
     targets: [
-      { code: 'COPD001', name: 'Targets COPD001' }
+      { code: 'COPD010', name: 'Targets COPD010' }
+    ],
+    targetDetails: [
+      {
+        code: 'COPD010',
+        qofCode: 'QOF_COPD010',
+        description: 'COPD management target COPD010',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 9,
+        currentPoints: 4.94,
+        totalCompletion: 72
+      }
     ]
   },
   'heart-failure': {
@@ -554,7 +1584,52 @@ const conditionMap = {
     qofCode: 'QOF_HF001',
     description: 'Heart failure management including echocardiography, medication review, and symptom monitoring',
     targets: [
-      { code: 'HF001', name: 'Targets HF001' }
+      { code: 'HF003', name: 'Targets HF003' },
+      { code: 'HF006', name: 'Targets HF006' },
+      { code: 'HF007', name: 'Targets HF007' },
+      { code: 'HF008', name: 'Targets HF008' }
+    ],
+    targetDetails: [
+      {
+        code: 'HF003',
+        qofCode: 'QOF_HF003',
+        description: 'Heart failure management target HF003',
+        minThreshold: 60,
+        maxThreshold: 92,
+        maxPoints: 6,
+        currentPoints: 3.28,
+        totalCompletion: 78
+      },
+      {
+        code: 'HF006',
+        qofCode: 'QOF_HF006',
+        description: 'Heart failure management target HF006',
+        minThreshold: 60,
+        maxThreshold: 92,
+        maxPoints: 6,
+        currentPoints: 3.47,
+        totalCompletion: 78
+      },
+      {
+        code: 'HF007',
+        qofCode: 'QOF_HF007',
+        description: 'Heart failure management target HF007',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 7,
+        currentPoints: 1.18,
+        totalCompletion: 57
+      },
+      {
+        code: 'HF008',
+        qofCode: 'QOF_HF008',
+        description: 'Heart failure management target HF008',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 6,
+        currentPoints: 6,
+        totalCompletion: 91
+      }
     ]
   },
   'atrial-fibrillation': {
@@ -562,7 +1637,30 @@ const conditionMap = {
     qofCode: 'QOF_AF001',
     description: 'Atrial fibrillation management including anticoagulation therapy and stroke risk assessment',
     targets: [
-      { code: 'AF001', name: 'Targets AF001' }
+      { code: 'AF006', name: 'Targets AF006' },
+      { code: 'AF008', name: 'Targets AF008' }
+    ],
+    targetDetails: [
+      {
+        code: 'AF006',
+        qofCode: 'QOF_AF006',
+        description: 'Atrial fibrillation management target AF006',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 12,
+        currentPoints: 12,
+        totalCompletion: 98
+      },
+      {
+        code: 'AF008',
+        qofCode: 'QOF_AF008',
+        description: 'Atrial fibrillation management target AF008',
+        minThreshold: 70,
+        maxThreshold: 95,
+        maxPoints: 12,
+        currentPoints: 11.4,
+        totalCompletion: 94
+      }
     ]
   },
   'coronary-heart-disease': {
@@ -570,7 +1668,41 @@ const conditionMap = {
     qofCode: 'QOF_CHD001',
     description: 'Coronary heart disease management including lipid control, blood pressure monitoring, and medication review',
     targets: [
-      { code: 'CHD001', name: 'Targets CHD001' }
+      { code: 'CHD005', name: 'Targets CHD005' },
+      { code: 'CHD015', name: 'Targets CHD015' },
+      { code: 'CHD016', name: 'Targets CHD016' }
+    ],
+    targetDetails: [
+      {
+        code: 'CHD005',
+        qofCode: 'QOF_CHD005',
+        description: 'Coronary heart disease management target CHD005',
+        minThreshold: 56,
+        maxThreshold: 96,
+        maxPoints: 7,
+        currentPoints: 5.07,
+        totalCompletion: 85
+      },
+      {
+        code: 'CHD015',
+        qofCode: 'QOF_CHD015',
+        description: 'Coronary heart disease management target CHD015',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 33,
+        currentPoints: 14.68,
+        totalCompletion: 62
+      },
+      {
+        code: 'CHD016',
+        qofCode: 'QOF_CHD016',
+        description: 'Coronary heart disease management target CHD016',
+        minThreshold: 46,
+        maxThreshold: 90,
+        maxPoints: 14,
+        currentPoints: 9.23,
+        totalCompletion: 75
+      }
     ]
   },
   'dementia': {
@@ -578,7 +1710,19 @@ const conditionMap = {
     qofCode: 'QOF_DEM001',
     description: 'Dementia care including cognitive assessment, medication review, and carer support',
     targets: [
-      { code: 'DEM001', name: 'Targets DEM001' }
+      { code: 'DEM004', name: 'Targets DEM004' }
+    ],
+    targetDetails: [
+      {
+        code: 'DEM004',
+        qofCode: 'QOF_DEM004',
+        description: 'Dementia care target DEM004',
+        minThreshold: 35,
+        maxThreshold: 70,
+        maxPoints: 14,
+        currentPoints: 0,
+        totalCompletion: 0
+      }
     ]
   },
   'mental-health': {
@@ -586,7 +1730,74 @@ const conditionMap = {
     qofCode: 'QOF_MH001',
     description: 'Mental health management including depression screening, medication review, and care planning',
     targets: [
-      { code: 'MH001', name: 'Targets MH001' }
+      { code: 'MH002', name: 'Targets MH002' },
+      { code: 'MH003', name: 'Targets MH003' },
+      { code: 'MH006', name: 'Targets MH006' },
+      { code: 'MH007', name: 'Targets MH007' },
+      { code: 'MH011', name: 'Targets MH011' },
+      { code: 'MH012', name: 'Targets MH012' }
+    ],
+    targetDetails: [
+      {
+        code: 'MH002',
+        qofCode: 'QOF_MH002',
+        description: 'Mental health management target MH002',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 5,
+        currentPoints: 0.04,
+        totalCompletion: 40
+      },
+      {
+        code: 'MH003',
+        qofCode: 'QOF_MH003',
+        description: 'Mental health management target MH003',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 3,
+        currentPoints: 0.39,
+        totalCompletion: 55
+      },
+      {
+        code: 'MH006',
+        qofCode: 'QOF_MH006',
+        description: 'Mental health management target MH006',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 3,
+        currentPoints: 0,
+        totalCompletion: 48
+      },
+      {
+        code: 'MH007',
+        qofCode: 'QOF_MH007',
+        description: 'Mental health management target MH007',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 3,
+        currentPoints: 0.23,
+        totalCompletion: 53
+      },
+      {
+        code: 'MH011',
+        qofCode: 'QOF_MH011',
+        description: 'Mental health management target MH011',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 7,
+        currentPoints: 1.75,
+        totalCompletion: 60
+      },
+      {
+        code: 'MH012',
+        qofCode: 'QOF_MH012',
+        description: 'Mental health management target MH012',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 7,
+        currentPoints: 1.19,
+        totalCompletion: 57
+      }
     ]
   },
   'ndh': {
@@ -594,7 +1805,19 @@ const conditionMap = {
     qofCode: 'QOF_NDH001',
     description: 'Non-diabetic hyperglycaemia management including lifestyle interventions and monitoring',
     targets: [
-      { code: 'NDH001', name: 'Targets NDH001' }
+      { code: 'NDH002', name: 'Targets NDH002' }
+    ],
+    targetDetails: [
+      {
+        code: 'NDH002',
+        qofCode: 'QOF_NDH002',
+        description: 'Non-diabetic hyperglycaemia management target NDH002',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 18,
+        currentPoints: 15.28,
+        totalCompletion: 84
+      }
     ]
   },
   'stroke-tia': {
@@ -602,7 +1825,41 @@ const conditionMap = {
     qofCode: 'QOF_STK001',
     description: 'Stroke and TIA management including anticoagulation, blood pressure control, and secondary prevention',
     targets: [
-      { code: 'STK001', name: 'Targets STK001' }
+      { code: 'STIA007', name: 'Targets STIA007' },
+      { code: 'STIA014', name: 'Targets STIA014' },
+      { code: 'STIA015', name: 'Targets STIA015' }
+    ],
+    targetDetails: [
+      {
+        code: 'STIA007',
+        qofCode: 'QOF_STIA007',
+        description: 'Stroke and TIA management target STIA007',
+        minThreshold: 57,
+        maxThreshold: 97,
+        maxPoints: 4,
+        currentPoints: 3.11,
+        totalCompletion: 88
+      },
+      {
+        code: 'STIA014',
+        qofCode: 'QOF_STIA014',
+        description: 'Stroke and TIA management target STIA014',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 8,
+        currentPoints: 3.17,
+        totalCompletion: 60
+      },
+      {
+        code: 'STIA015',
+        qofCode: 'QOF_STIA015',
+        description: 'Stroke and TIA management target STIA015',
+        minThreshold: 46,
+        maxThreshold: 90,
+        maxPoints: 6,
+        currentPoints: 4.4,
+        totalCompletion: 78
+      }
     ]
   },
   'blood-pressure': {
@@ -610,7 +1867,19 @@ const conditionMap = {
     qofCode: 'QOF_BP001',
     description: 'Blood pressure monitoring and management including hypertension screening and control',
     targets: [
-      { code: 'BP001', name: 'Targets BP001' }
+      { code: 'BP002', name: 'Targets BP002' }
+    ],
+    targetDetails: [
+      {
+        code: 'BP002',
+        qofCode: 'QOF_BP002',
+        description: 'Blood pressure management target BP002',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 15,
+        currentPoints: 0,
+        totalCompletion: 0
+      }
     ]
   },
   'smoking': {
@@ -618,7 +1887,30 @@ const conditionMap = {
     qofCode: 'QOF_SMK001',
     description: 'Smoking cessation support including advice, referrals, and follow-up care',
     targets: [
-      { code: 'SMK001', name: 'Targets SMK001' }
+      { code: 'SMOK002', name: 'Targets SMOK002' },
+      { code: 'SMOK004', name: 'Targets SMOK004' }
+    ],
+    targetDetails: [
+      {
+        code: 'SMOK002',
+        qofCode: 'QOF_SMOK002',
+        description: 'Smoking cessation target SMOK002',
+        minThreshold: 50,
+        maxThreshold: 90,
+        maxPoints: 25,
+        currentPoints: 0,
+        totalCompletion: 0
+      },
+      {
+        code: 'SMOK004',
+        qofCode: 'QOF_SMOK004',
+        description: 'Smoking cessation target SMOK004',
+        minThreshold: 40,
+        maxThreshold: 90,
+        maxPoints: 12,
+        currentPoints: 0,
+        totalCompletion: 0
+      }
     ]
   },
   'vaccination-immunisations': {
@@ -626,7 +1918,52 @@ const conditionMap = {
     qofCode: 'QOF_VAC001',
     description: 'Vaccination and immunisation coverage including flu, COVID-19, and routine childhood vaccinations',
     targets: [
-      { code: 'VAC001', name: 'Targets VAC001' }
+      { code: 'VI001', name: 'Targets VI001' },
+      { code: 'VI002', name: 'Targets VI002' },
+      { code: 'VI003', name: 'Targets VI003' },
+      { code: 'VI004', name: 'Targets VI004' }
+    ],
+    targetDetails: [
+      {
+        code: 'VI001',
+        qofCode: 'QOF_VI001',
+        description: 'Vaccination and immunisations target VI001',
+        minThreshold: 89,
+        maxThreshold: 96,
+        maxPoints: 18,
+        currentPoints: 0,
+        totalCompletion: 0
+      },
+      {
+        code: 'VI002',
+        qofCode: 'QOF_VI002',
+        description: 'Vaccination and immunisations target VI002',
+        minThreshold: 86,
+        maxThreshold: 96,
+        maxPoints: 18,
+        currentPoints: 0,
+        totalCompletion: 0
+      },
+      {
+        code: 'VI003',
+        qofCode: 'QOF_VI003',
+        description: 'Vaccination and immunisations target VI003',
+        minThreshold: 86,
+        maxThreshold: 96,
+        maxPoints: 18,
+        currentPoints: 0,
+        totalCompletion: 0
+      },
+      {
+        code: 'VI004',
+        qofCode: 'QOF_VI004',
+        description: 'Vaccination and immunisations target VI004',
+        minThreshold: 57,
+        maxThreshold: 97,
+        maxPoints: 10,
+        currentPoints: 0,
+        totalCompletion: 0
+      }
     ]
   },
   'cervical-screening': {
@@ -634,7 +1971,30 @@ const conditionMap = {
     qofCode: 'QOF_CS001',
     description: 'Cervical screening coverage including invitations, uptake, and follow-up care',
     targets: [
-      { code: 'CS001', name: 'Targets CS001' }
+      { code: 'CS005', name: 'Targets CS005' },
+      { code: 'CS006', name: 'Targets CS006' }
+    ],
+    targetDetails: [
+      {
+        code: 'CS005',
+        qofCode: 'QOF_CS005',
+        description: 'Cervical screening target CS005',
+        minThreshold: 45,
+        maxThreshold: 80,
+        maxPoints: 7,
+        currentPoints: 0,
+        totalCompletion: 0
+      },
+      {
+        code: 'CS006',
+        qofCode: 'QOF_CS006',
+        description: 'Cervical screening target CS006',
+        minThreshold: 45,
+        maxThreshold: 80,
+        maxPoints: 4,
+        currentPoints: 0,
+        totalCompletion: 0
+      }
     ]
   }
 }
@@ -1048,6 +2408,20 @@ const getClinicalCompletionPatients = (target) => {
   return Math.round(0.92 * completed)
 }
 
+// Helper function to get total completion percentage (clinically complete + exception reported)
+const getTotalCompletion = (target) => {
+  const targetCode = target.code || target.qofCode
+  if (targetCode === 'HYP008' || targetCode === 'QOF_HYP008') {
+    // HYP008: 54.4% (complete) + 12.9% (exception invited) = 67.3%
+    return 67.3
+  } else if (targetCode === 'HYP009' || targetCode === 'QOF_HYP009') {
+    // HYP009: 67% (complete) + 4.8% (exception invited) = 71.8%
+    return 71.8
+  }
+  // Fallback to target progress for other targets
+  return getTargetProgress(target)
+}
+
 // Helper function to calculate target progress percentage
 const getTargetProgress = (target) => {
   const totalRegister = getPatientNumbers(target, getActualCompletion(target)).totalRegister
@@ -1072,11 +2446,62 @@ const getRemainingPatients = (target) => {
   return totalRegister - clinicalCompleted - exceptionPatients
 }
 
+// Helper function to calculate QOF points based on achievement percentage
+// Points are calculated on a sliding scale: 40% = 1 point, 85% = max points
+const getQOFPoints = (target) => {
+  // Indicator configuration: minThreshold, maxThreshold, maxPoints
+  const indicatorConfig = {
+    'HYP008': { minThreshold: 40, maxThreshold: 85, maxPoints: 38 },
+    'QOF_HYP008': { minThreshold: 40, maxThreshold: 85, maxPoints: 38 },
+    'HYP009': { minThreshold: 40, maxThreshold: 85, maxPoints: 14 },
+    'QOF_HYP009': { minThreshold: 40, maxThreshold: 85, maxPoints: 14 }
+  }
+  
+  const targetCode = target.code || target.qofCode
+  const config = indicatorConfig[targetCode]
+  
+  if (!config) {
+    return 0
+  }
+  
+  // Get current achievement percentage
+  const achievement = getTargetProgress(target)
+  
+  // If below minimum threshold, return 0 points
+  if (achievement < config.minThreshold) {
+    return 0
+  }
+  
+  // If at or above maximum threshold, return max points
+  if (achievement >= config.maxThreshold) {
+    return config.maxPoints
+  }
+  
+  // Linear interpolation between minThreshold (1 point) and maxThreshold (maxPoints)
+  // Formula: points = 1 + (achievement - minThreshold) / (maxThreshold - minThreshold) * (maxPoints - 1)
+  const points = 1 + ((achievement - config.minThreshold) / (config.maxThreshold - config.minThreshold)) * (config.maxPoints - 1)
+  
+  return Math.round(points * 10) / 10 // Round to 1 decimal place
+}
+
+// Helper function to get maximum QOF points available for a target
+const getMaxQOFPoints = (target) => {
+  const indicatorConfig = {
+    'HYP008': { maxPoints: 38 },
+    'QOF_HYP008': { maxPoints: 38 },
+    'HYP009': { maxPoints: 14 },
+    'QOF_HYP009': { maxPoints: 14 }
+  }
+  
+  const targetCode = target.code || target.qofCode
+  return indicatorConfig[targetCode]?.maxPoints || 0
+}
+
 // Helper function to calculate unclaimed QOF points
 const getUnclaimedPoints = (target) => {
-  const remaining = getRemainingPatients(target)
-  // Rough estimate: 1 point per patient (adjust as needed)
-  return Math.round(remaining * 0.55) // Example calculation
+  const maxPoints = getMaxQOFPoints(target)
+  const currentPoints = getQOFPoints(target)
+  return Math.max(0, maxPoints - currentPoints)
 }
 
 // Helper function to calculate revenue left on table
@@ -1262,5 +2687,295 @@ const getPatientNumbersForColumn = (target, currentAchievement, columnType) => {
     remaining,
     requiredForMax
   }
+}
+
+// Helper function to get summary data for hypertension summary chart
+// Calculate expected achievement for summary bars (both HYP008 and HYP009 have 85% max)
+const getExpectedAchievementForSummary = () => {
+  const yearProgress = getFinancialYearProgress()
+  const maxAchievement = 85 // Both HYP008 and HYP009 have 85% max achievement
+  // Expected achievement = year progress * max achievement
+  return yearProgress * maxAchievement
+}
+
+const getSummaryData = (targetCode) => {
+  // Total register sizes
+  const totalRegisters = {
+    'HYP008': 951,
+    'HYP009': 333
+  }
+  
+  // Direct data for HYP008 and HYP009
+  // HYP008: Total completion 67.3%, Clinical 54.4%, Exception Invited 12.9%
+  // Exception Clinical = Total - Clinical - Invited = 67.3 - 54.4 - 12.9 = 0%
+  // Incomplete = 100 - 67.3 = 32.7%
+  // HYP009: Total completion 71.8%, Clinical 67%, Exception Invited 4.8%
+  // Incomplete = 100 - 71.8 = 28.2%
+  const summaryData = {
+    'HYP008': {
+      complete: 54.4,
+      incomplete: 32.7,
+      exceptionInvited: 12.9,
+      exceptionClinical: 0,
+      totalRegister: 951
+    },
+    'HYP009': {
+      complete: 67,
+      incomplete: 28.2,
+      exceptionInvited: 4.8,
+      exceptionClinical: 0,
+      totalRegister: 333
+    }
+  }
+  
+  const data = summaryData[targetCode] || {
+    complete: 0,
+    incomplete: 0,
+    exceptionInvited: 0,
+    exceptionClinical: 0,
+    totalRegister: 0
+  }
+  
+  // Calculate patient numbers
+  const totalRegister = data.totalRegister || totalRegisters[targetCode] || 0
+  return {
+    ...data,
+    completePatients: Math.round((data.complete / 100) * totalRegister),
+    incompletePatients: Math.round((data.incomplete / 100) * totalRegister),
+    exceptionInvitedPatients: Math.round((data.exceptionInvited / 100) * totalRegister),
+    exceptionClinicalPatients: Math.round((data.exceptionClinical / 100) * totalRegister)
+  }
+}
+
+// Helper functions for Target Achievement Progress section
+// November 1st data (previous month comparison)
+const getHYP008NovemberData = () => {
+  return {
+    registerSize: 940, // Example: Nov 1st register size
+    clinicalCompletion: 500, // Example: Nov 1st clinical completion
+    invitedException: 110, // Example: Nov 1st invited exception
+    notYetInvited: 330 // Example: Nov 1st not yet invited
+  }
+}
+
+// HYP008 Register Size
+const getHYP008RegisterSize = () => {
+  return getSummaryData('HYP008').totalRegister
+}
+
+const getHYP008RegisterSizePrevious = () => {
+  return getHYP008NovemberData().registerSize
+}
+
+const getHYP008RegisterSizeChange = () => {
+  return getHYP008RegisterSize() - getHYP008RegisterSizePrevious()
+}
+
+const getHYP008RegisterSizeChangePercent = () => {
+  const previous = getHYP008RegisterSizePrevious()
+  if (previous === 0) return 0
+  return Math.round((getHYP008RegisterSizeChange() / previous) * 100 * 10) / 10
+}
+
+// Clinical Completion Number
+const getClinicalCompletionNumber = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getSummaryData('HYP008').completePatients
+  }
+  return 0
+}
+
+const getClinicalCompletionNumberPrevious = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getHYP008NovemberData().clinicalCompletion
+  }
+  return 0
+}
+
+const getClinicalCompletionNumberChange = (target) => {
+  return getClinicalCompletionNumber(target) - getClinicalCompletionNumberPrevious(target)
+}
+
+const getClinicalCompletionNumberChangePercent = (target) => {
+  const previous = getClinicalCompletionNumberPrevious(target)
+  if (previous === 0) return 0
+  return Math.round((getClinicalCompletionNumberChange(target) / previous) * 100 * 10) / 10
+}
+
+// Invited Exception Reporting Number
+const getInvitedExceptionNumber = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getSummaryData('HYP008').exceptionInvitedPatients
+  }
+  return 0
+}
+
+const getInvitedExceptionNumberPrevious = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getHYP008NovemberData().invitedException
+  }
+  return 0
+}
+
+const getInvitedExceptionNumberChange = (target) => {
+  return getInvitedExceptionNumber(target) - getInvitedExceptionNumberPrevious(target)
+}
+
+const getInvitedExceptionNumberChangePercent = (target) => {
+  const previous = getInvitedExceptionNumberPrevious(target)
+  if (previous === 0) return 0
+  return Math.round((getInvitedExceptionNumberChange(target) / previous) * 100 * 10) / 10
+}
+
+// Not Yet Invited Number
+const getNotYetInvitedNumber = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getSummaryData('HYP008').incompletePatients
+  }
+  return 0
+}
+
+const getNotYetInvitedNumberPrevious = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getHYP008NovemberData().notYetInvited
+  }
+  return 0
+}
+
+const getNotYetInvitedNumberChange = (target) => {
+  return getNotYetInvitedNumber(target) - getNotYetInvitedNumberPrevious(target)
+}
+
+const getNotYetInvitedNumberChangePercent = (target) => {
+  const previous = getNotYetInvitedNumberPrevious(target)
+  if (previous === 0) return 0
+  return Math.round((getNotYetInvitedNumberChange(target) / previous) * 100 * 10) / 10
+}
+
+// Helper to get CSS class for change (green for positive, red for negative)
+const getChangeClass = (change) => {
+  if (change > 0) return 'text-green-600 font-semibold'
+  if (change < 0) return 'text-red-600 font-semibold'
+  return 'text-gray-600'
+}
+
+// Helper for "Not Yet Invited" change class (reductions are positive/green)
+const getNotYetInvitedChangeClass = (change) => {
+  if (change < 0) return 'text-green-600 font-semibold' // Reduction is good
+  if (change > 0) return 'text-red-600 font-semibold' // Increase is bad
+  return 'text-gray-600'
+}
+
+// Clinical Completion Analysis helper functions
+const getLastYearClinicalAtThisTime = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    // Calculate based on financial year progress and last year total (62.52%)
+    const yearProgress = getFinancialYearProgress()
+    const lastYearTotalPercent = 62.52
+    const registerSize = getHYP008RegisterSize() // 951
+    const lastYearTotalPatients = Math.round((lastYearTotalPercent / 100) * registerSize)
+    // At this time of year = year progress * last year total
+    return Math.round(yearProgress * lastYearTotalPatients)
+  }
+  return 0
+}
+
+const getLastYearClinicalTotal = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    // Last year completion was 62.52%
+    const lastYearPercent = 62.52
+    const registerSize = getHYP008RegisterSize() // 951
+    return Math.round((lastYearPercent / 100) * registerSize)
+  }
+  return 0
+}
+
+// Get last year clinical at this time as percentage
+const getLastYearClinicalAtThisTimePercent = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    const yearProgress = getFinancialYearProgress()
+    const lastYearTotalPercent = 62.52
+    // At this time of year = year progress * last year total percentage
+    return Math.round(yearProgress * lastYearTotalPercent * 100) / 100
+  }
+  return 0
+}
+
+const getClinicalCompletionThisTimeOfYear = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return getClinicalCompletionNumber(target)
+  }
+  return 0
+}
+
+const getSubICBClinicalCompletionAverage = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return 68.06 // Last year Sub ICB Completion was 68.06%
+  }
+  return 0
+}
+
+// Calculate Sub ICB completion at this time of year (same calculation as December/expected by today)
+const getSubICBClinicalCompletionAtThisTime = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    const yearProgress = getFinancialYearProgress()
+    const endOfYearValue = 68.06 // Last year Sub ICB Completion was 68.06%
+    // Calculate based on financial year progress (same as expected by today calculation)
+    return Math.round(yearProgress * endOfYearValue * 100) / 100
+  }
+  return 0
+}
+
+// Exception Reporting Analysis helper functions
+const getLastYearExceptionAtThisTime = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    // Calculate based on financial year progress and last year total (19.72%)
+    const yearProgress = getFinancialYearProgress()
+    const lastYearTotalPercent = 19.72
+    const registerSize = getHYP008RegisterSize() // 951
+    const lastYearTotalPatients = Math.round((lastYearTotalPercent / 100) * registerSize)
+    // At this time of year = year progress * last year total
+    return Math.round(yearProgress * lastYearTotalPatients)
+  }
+  return 0
+}
+
+const getLastYearExceptionTotal = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    // Last year exception reporting was 19.72%
+    const lastYearPercent = 19.72
+    const registerSize = getHYP008RegisterSize() // 951
+    return Math.round((lastYearPercent / 100) * registerSize)
+  }
+  return 0
+}
+
+// Get last year exception at this time as percentage
+const getLastYearExceptionAtThisTimePercent = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    const yearProgress = getFinancialYearProgress()
+    const lastYearTotalPercent = 19.72
+    // At this time of year = year progress * last year total percentage
+    return Math.round(yearProgress * lastYearTotalPercent * 100) / 100
+  }
+  return 0
+}
+
+const getSubICBExceptionReportingAverage = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    return 12.75 // Last year Sub ICB exception reporting was 12.75%
+  }
+  return 0
+}
+
+// Calculate Sub ICB exception reporting at this time of year (same calculation as December/expected by today)
+const getSubICBExceptionReportingAtThisTime = (target) => {
+  if (target.code === 'HYP008' || target.qofCode === 'QOF_HYP008') {
+    const yearProgress = getFinancialYearProgress()
+    const endOfYearValue = 12.75 // Last year Sub ICB exception reporting was 12.75%
+    // Calculate based on financial year progress (same as expected by today calculation)
+    return Math.round(yearProgress * endOfYearValue * 100) / 100
+  }
+  return 0
 }
 </script>

@@ -57,53 +57,37 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div class="px-4 py-6 sm:px-0">
-        <!-- Welcome Section with Filter -->
+        <!-- Welcome Section -->
         <div class="mb-8 flex items-start justify-between">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Hello, Pilly 👋</h1>
             <div class="text-lg text-gray-600">{{ formattedDate }}</div>
           </div>
-          <!-- Filter Bar -->
-          <div class="flex items-center">
-            <button class="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mr-4">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-              </svg>
-              Filter
-            </button>
-            <div class="flex items-center space-x-4">
+          <!-- Practice Information Card -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-5 py-4">
+            <div class="grid grid-cols-2 gap-x-8 gap-y-3">
               <div class="flex items-center">
-                <label class="text-sm text-gray-700 mr-2">Practice:</label>
-                <select class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                  <option>The Medical Practice</option>
-                  <option>Maltings Surgery</option>
-                  <option>Summerfield Health Center</option>
-                </select>
+                <span class="text-xs font-medium text-gray-500 w-32">GP Practice Name:</span>
+                <span class="text-sm font-normal text-gray-900">Maltings Surgery (E82031)</span>
+              </div>
+          <div class="flex items-center">
+                <span class="text-xs font-medium text-gray-500 w-28">PCN Name:</span>
+                <span class="text-sm font-normal text-gray-900">Abbey Health PCN (U06079)</span>
               </div>
               <div class="flex items-center">
-                <label class="text-sm text-gray-700 mr-2">Target area:</label>
-                <select class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                  <option>All</option>
-                  <option>Asthma</option>
-                  <option>Hypertension</option>
-                  <option>Cholesterol</option>
-                  <option>Diabetes</option>
-                  <option>COPD</option>
-                  <option>Heart Failure</option>
-                  <option>Atrial Fibrillation</option>
-                  <option>Coronary Heart Disease</option>
-                  <option>Dementia</option>
-                  <option>Mental Health</option>
-                  <option>NDH</option>
-                  <option>Stroke and TIA</option>
-                </select>
+                <span class="text-xs font-medium text-gray-500 w-32">ICB Name:</span>
+                <span class="text-sm font-normal text-gray-900">NHS Hertfordshire and West Essex ICB (06N)</span>
+              </div>
+              <div class="flex items-center">
+                <span class="text-xs font-medium text-gray-500 w-32">Patient List Size:</span>
+                <span class="text-sm font-semibold text-gray-900">19,026</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Hero Section -->
-        <HeroSection :condition="route.query.condition || null" />
+        <!-- Hero Section - Update based on selected condition -->
+        <HeroSection :condition="expandedConditions.length > 0 ? expandedConditions[0] : null" />
 
         <!-- Clinical Domain Section -->
         <div class="mb-6">
@@ -111,320 +95,138 @@
         </div>
 
         <!-- Indicator Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
               <!-- Asthma -->
-              <NuxtLink to="/indicators?condition=asthma" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Asthma</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="asthma-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">52%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('asthma')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded('asthma') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Asthma</h4>
+                  <span class="text-sm font-semibold text-gray-900">52%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 3% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Hypertension -->
-              <NuxtLink to="/indicators?condition=hypertension" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Hypertension</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="hypertension-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">29%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('hypertension')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded('hypertension') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Hypertension</h4>
+                  <span class="text-sm font-semibold text-gray-900">29%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-red-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Down 1% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Cholesterol -->
-              <NuxtLink to="/indicators?condition=cholesterol" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Cholesterol</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="cholesterol-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">80%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('cholesterol')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded('cholesterol') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Cholesterol</h4>
+                  <span class="text-sm font-semibold text-gray-900">80%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 25% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Diabetes -->
-              <NuxtLink to="/indicators?condition=diabetes" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Diabetes</h4>
-                  <span class="text-blue-600 text-xs">View</span>
+              <div 
+                @click="toggleCondition('diabetes')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'diabetes') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Diabetes</h4>
+                  <span class="text-sm font-semibold text-gray-900">2%</span>
                 </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="diabetes-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">2%</div>
-                    </div>
-                  </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="text-gray-500 text-xs">No changes</div>
-                </div>
-              </NuxtLink>
 
               <!-- COPD -->
-              <NuxtLink to="/indicators?condition=copd" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">COPD</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="copd-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">45%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('copd')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'copd') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">COPD</h4>
+                  <span class="text-sm font-semibold text-gray-900">45%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 3% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Heart Failure -->
-              <NuxtLink to="/indicators?condition=heart-failure" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Heart Failure</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="heart-failure-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">38%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('heart-failure')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'heart-failure') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Heart Failure</h4>
+                  <span class="text-sm font-semibold text-gray-900">38%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 2% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Atrial Fibrillation -->
-              <NuxtLink to="/indicators?condition=atrial-fibrillation" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Atrial Fibrillation</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="atrial-fibrillation-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">61%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('atrial-fibrillation')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'atrial-fibrillation') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Atrial Fibrillation</h4>
+                  <span class="text-sm font-semibold text-gray-900">61%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 4% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Coronary Heart Disease -->
-              <NuxtLink to="/indicators?condition=coronary-heart-disease" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Coronary Heart Disease</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="coronary-heart-disease-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">67%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('coronary-heart-disease')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'coronary-heart-disease') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Coronary Heart Disease</h4>
+                  <span class="text-sm font-semibold text-gray-900">67%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 1% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Dementia -->
-              <NuxtLink to="/indicators?condition=dementia" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Dementia</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="dementia-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">34%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('dementia')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'dementia') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Dementia</h4>
+                  <span class="text-sm font-semibold text-gray-900">34%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-red-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Down 2% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- Mental Health -->
-              <NuxtLink to="/indicators?condition=mental-health" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Mental Health</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="mental-health-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">56%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('mental-health')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'mental-health') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Mental Health</h4>
+                  <span class="text-sm font-semibold text-gray-900">56%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 3% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
               <!-- NDH -->
-              <NuxtLink to="/indicators?condition=ndh" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">NDH</h4>
-                  <span class="text-blue-600 text-xs">View</span>
+              <div 
+                @click="toggleCondition('ndh')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'ndh') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">NDH</h4>
+                  <span class="text-sm font-semibold text-gray-900">42%</span>
                 </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="ndh-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">42%</div>
-                    </div>
-                  </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="text-gray-500 text-xs">No changes</div>
-                </div>
-              </NuxtLink>
 
               <!-- Stroke and TIA -->
-              <NuxtLink to="/indicators?condition=stroke-tia" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                  <h4 class="text-sm font-semibold text-gray-900">Stroke and TIA</h4>
-                  <span class="text-blue-600 text-xs">View</span>
-                </div>
-                <div class="flex justify-center mb-4">
-                  <div class="circular-progress" style="width: 80px; height: 80px;">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="35" class="background"></circle>
-                      <circle cx="50" cy="50" r="35" class="progress gray" id="stroke-tia-progress"></circle>
-                    </svg>
-                    <div class="text">
-                      <div class="text-lg font-bold text-gray-900">48%</div>
-                    </div>
+              <div 
+                @click="toggleCondition('stroke-tia')"
+                :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'stroke-tia') ? 'border-blue-500' : 'border-gray-200']"
+              >
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-medium text-gray-900">Stroke and TIA</h4>
+                  <span class="text-sm font-semibold text-gray-900">48%</span>
                   </div>
                 </div>
-                <div class="text-center pt-1">
-                  <div class="flex items-center justify-center text-green-600 text-xs">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    Up 2% from last week
-                  </div>
-                </div>
-              </NuxtLink>
 
             </div>
 
@@ -434,114 +236,69 @@
         </div>
 
         <!-- Public Health Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           <!-- Blood Pressure -->
-          <NuxtLink to="/indicators?condition=blood-pressure" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-4">
-              <h4 class="text-sm font-semibold text-gray-900">Blood Pressure</h4>
-              <span class="text-blue-600 text-xs">View</span>
-            </div>
-            <div class="flex justify-center mb-4">
-              <div class="circular-progress" style="width: 80px; height: 80px;">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" class="background"></circle>
-                  <circle cx="50" cy="50" r="35" class="progress gray" id="blood-pressure-progress"></circle>
-                </svg>
-                <div class="text">
-                  <div class="text-lg font-bold text-gray-900">58%</div>
-                </div>
+          <div 
+            @click="toggleCondition('blood-pressure')"
+            :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'blood-pressure') ? 'border-blue-500' : 'border-gray-200']"
+          >
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-medium text-gray-900">Blood Pressure</h4>
+              <span class="text-sm font-semibold text-gray-900">58%</span>
               </div>
             </div>
-            <div class="text-center pt-1">
-              <div class="flex items-center justify-center text-green-600 text-xs">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Up 2% from last week
-              </div>
-            </div>
-          </NuxtLink>
 
           <!-- Smoking -->
-          <NuxtLink to="/indicators?condition=smoking" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-4">
-              <h4 class="text-sm font-semibold text-gray-900">Smoking</h4>
-              <span class="text-blue-600 text-xs">View</span>
-            </div>
-            <div class="flex justify-center mb-4">
-              <div class="circular-progress" style="width: 80px; height: 80px;">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" class="background"></circle>
-                  <circle cx="50" cy="50" r="35" class="progress gray" id="smoking-progress"></circle>
-                </svg>
-                <div class="text">
-                  <div class="text-lg font-bold text-gray-900">72%</div>
-                </div>
+          <div 
+            @click="toggleCondition('smoking')"
+            :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'smoking') ? 'border-blue-500' : 'border-gray-200']"
+          >
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-medium text-gray-900">Smoking</h4>
+              <span class="text-sm font-semibold text-gray-900">72%</span>
               </div>
             </div>
-            <div class="text-center pt-1">
-              <div class="flex items-center justify-center text-green-600 text-xs">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Up 4% from last week
-              </div>
-            </div>
-          </NuxtLink>
 
           <!-- Vaccination and Immunisations -->
-          <NuxtLink to="/indicators?condition=vaccination-immunisations" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-4">
-              <h4 class="text-sm font-semibold text-gray-900">Vaccination and Immunisations</h4>
-              <span class="text-blue-600 text-xs">View</span>
-            </div>
-            <div class="flex justify-center mb-4">
-              <div class="circular-progress" style="width: 80px; height: 80px;">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" class="background"></circle>
-                  <circle cx="50" cy="50" r="35" class="progress gray" id="vaccination-immunisations-progress"></circle>
-                </svg>
-                <div class="text">
-                  <div class="text-lg font-bold text-gray-900">85%</div>
-                </div>
+          <div 
+            @click="toggleCondition('vaccination-immunisations')"
+            :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'vaccination-immunisations') ? 'border-blue-500' : 'border-gray-200']"
+          >
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-medium text-gray-900">Vaccination and Immunisations</h4>
+              <span class="text-sm font-semibold text-gray-900">85%</span>
               </div>
             </div>
-            <div class="text-center pt-1">
-              <div class="flex items-center justify-center text-green-600 text-xs">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Up 1% from last week
-              </div>
-            </div>
-          </NuxtLink>
 
           <!-- Cervical Screening -->
-          <NuxtLink to="/indicators?condition=cervical-screening" class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 block hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-4">
-              <h4 class="text-sm font-semibold text-gray-900">Cervical Screening</h4>
-              <span class="text-blue-600 text-xs">View</span>
+          <div 
+            @click="toggleCondition('cervical-screening')"
+            :class="['bg-white rounded-md shadow-sm border px-3 py-2 cursor-pointer hover:shadow-md transition-shadow', isConditionExpanded( 'cervical-screening') ? 'border-blue-500' : 'border-gray-200']"
+          >
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-medium text-gray-900">Cervical Screening</h4>
+              <span class="text-sm font-semibold text-gray-900">64%</span>
             </div>
-            <div class="flex justify-center mb-4">
-              <div class="circular-progress" style="width: 80px; height: 80px;">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" class="background"></circle>
-                  <circle cx="50" cy="50" r="35" class="progress gray" id="cervical-screening-progress"></circle>
-                </svg>
-                <div class="text">
-                  <div class="text-lg font-bold text-gray-900">64%</div>
                 </div>
               </div>
+
+        <!-- Expanded Conditions Content -->
+        <div v-if="expandedConditions.length > 0" class="mt-8">
+          <!-- Check if we have conditions with targetDetails for merged summary -->
+          <template v-if="hasConditionsWithTargetDetails">
+            <IndicatorsMergedSummary :conditions="expandedConditions" />
+          </template>
+          
+          <!-- Otherwise show individual condition content -->
+          <template v-else>
+            <div class="space-y-8">
+              <IndicatorsContent 
+                v-for="condition in expandedConditions" 
+                :key="condition"
+                :condition="condition" 
+              />
             </div>
-            <div class="text-center pt-1">
-              <div class="flex items-center justify-center text-green-600 text-xs">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Up 3% from last week
-              </div>
-            </div>
-          </NuxtLink>
+          </template>
         </div>
       </div>
     </main>
@@ -552,6 +309,77 @@
 import { ref, onMounted, computed } from 'vue'
 
 const route = useRoute()
+
+// Track which conditions are expanded (array to support multiple)
+const expandedConditions = ref([])
+
+// Toggle condition expansion (supports multiple)
+const toggleCondition = (condition) => {
+  const index = expandedConditions.value.indexOf(condition)
+  if (index > -1) {
+    // Remove if already expanded
+    expandedConditions.value.splice(index, 1)
+  } else {
+    // Add if not expanded
+    expandedConditions.value.push(condition)
+  }
+}
+
+// Check if a condition is expanded
+const isConditionExpanded = (condition) => {
+  return expandedConditions.value.includes(condition)
+}
+
+// Condition data mapping to check for targetDetails
+const conditionMap = {
+  'hypertension': { targetDetails: true },
+  'cholesterol': { targetDetails: true },
+  'asthma': { targetDetails: true },
+  'atrial-fibrillation': { targetDetails: true },
+  'coronary-heart-disease': { targetDetails: true },
+  'copd': { targetDetails: true },
+  'heart-failure': { targetDetails: true },
+  'diabetes': { targetDetails: true },
+  'dementia': { targetDetails: true },
+  'mental-health': { targetDetails: true },
+  'ndh': { targetDetails: true },
+  'stroke-tia': { targetDetails: true },
+  'blood-pressure': { targetDetails: true },
+  'smoking': { targetDetails: true },
+  'vaccination-immunisations': { targetDetails: true },
+  'cervical-screening': { targetDetails: true }
+}
+
+// Check if we should show merged summary (multiple conditions selected and at least one has targetDetails)
+const hasConditionsWithTargetDetails = computed(() => {
+  if (expandedConditions.value.length < 2) return false
+  return expandedConditions.value.some(condition => {
+    return conditionMap[condition] && conditionMap[condition].targetDetails
+  })
+})
+
+// Get condition title
+const getConditionTitle = (condition) => {
+  const titles = {
+    'asthma': 'Asthma',
+    'hypertension': 'Hypertension',
+    'cholesterol': 'Cholesterol',
+    'diabetes': 'Diabetes',
+    'copd': 'COPD',
+    'heart-failure': 'Heart Failure',
+    'atrial-fibrillation': 'Atrial Fibrillation',
+    'coronary-heart-disease': 'Coronary Heart Disease',
+    'dementia': 'Dementia',
+    'mental-health': 'Mental Health',
+    'ndh': 'NDH',
+    'stroke-tia': 'Stroke and TIA',
+    'blood-pressure': 'Blood Pressure',
+    'smoking': 'Smoking',
+    'vaccination-immunisations': 'Vaccination and Immunisations',
+    'cervical-screening': 'Cervical Screening'
+  }
+  return titles[condition] || condition
+}
 
 // Reactive data
 const formattedDate = computed(() => {
