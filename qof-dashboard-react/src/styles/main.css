@@ -1,0 +1,285 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for circular progress indicators */
+.circular-progress {
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+.circular-progress .text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circular-progress svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+    fill: none;
+    stroke-width: 8;
+}
+
+.circular-progress .background {
+    stroke: #e5e7eb;
+}
+
+.circular-progress .progress {
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.circular-progress .progress.green {
+    stroke: #22c55e;
+}
+
+.circular-progress .progress.orange {
+    stroke: #f97316;
+}
+
+.circular-progress .progress.blue {
+    stroke: #3b82f6;
+}
+
+.circular-progress .progress.red {
+    stroke: #ef4444;
+}
+
+.circular-progress .progress.pink {
+    stroke: #ec4899;
+}
+
+.circular-progress .progress.purple {
+    stroke: #8b5cf6;
+}
+
+.circular-progress .progress.cyan {
+    stroke: #06b6d4;
+}
+
+.circular-progress .progress.yellow {
+    stroke: #eab308;
+}
+
+.circular-progress .progress.indigo {
+    stroke: #6366f1;
+}
+
+.circular-progress .progress.teal {
+    stroke: #14b8a6;
+}
+
+.circular-progress .progress.emerald {
+    stroke: #10b981;
+}
+
+.circular-progress .progress.lime {
+    stroke: #84cc16;
+}
+
+.circular-progress .progress.amber {
+    stroke: #f59e0b;
+}
+
+.circular-progress .progress.rose {
+    stroke: #f43f5e;
+}
+
+.circular-progress .progress.sky {
+    stroke: #0ea5e9;
+}
+
+.circular-progress .progress.violet {
+    stroke: #8b5cf6;
+}
+
+.circular-progress .progress.fuchsia {
+    stroke: #d946ef;
+}
+
+.circular-progress .progress.slate {
+    stroke: #64748b;
+}
+
+.circular-progress .progress.gray {
+    stroke: #6b7280;
+}
+
+.circular-progress .progress.zinc {
+    stroke: #71717a;
+}
+
+.circular-progress .progress.neutral {
+    stroke: #737373;
+}
+
+.circular-progress .progress.stone {
+    stroke: #78716c;
+}
+
+/* Small circular progress for condition cards */
+.circular-progress.small {
+    width: 60px;
+    height: 60px;
+}
+
+.circular-progress.small circle {
+    stroke-width: 6;
+}
+
+.circular-progress.small .progress {
+    stroke-dasharray: 157; /* 2 * π * 25 */
+}
+
+/* Custom styles for progress bars */
+.progress-bar {
+    width: 100%;
+    height: 200px;
+    background-color: #e5e7eb;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;
+}
+
+/* Dotted lines for achievement targets */
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: repeating-linear-gradient(
+        to right,
+        #ef4444 0,
+        #ef4444 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    z-index: 10;
+}
+
+/* 40% line (red) */
+.progress-bar::before {
+    top: 60%; /* 40% from bottom = 60% from top */
+}
+
+/* 85% line (green) for QOF 25/26 */
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 15%; /* 85% from bottom = 15% from top */
+    height: 1px;
+    background: repeating-linear-gradient(
+        to right,
+        #22c55e 0,
+        #22c55e 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    z-index: 10;
+}
+
+/* 77% line (green) for QOF 24/25 */
+.progress-bar.qof-24-25::after {
+    top: 23%; /* 77% from bottom = 23% from top */
+}
+
+/* 80% line (green) for QOF 24/25 in HYP009 */
+.progress-bar.qof-24-25.hyp009::after {
+    top: 20%; /* 80% from bottom = 20% from top */
+}
+
+/* Legend labels for target lines */
+.target-label {
+    position: absolute;
+    font-size: 10px;
+    font-weight: 500;
+    z-index: 15;
+    background: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    right: 5px;
+}
+
+.target-label-40 {
+    top: 60%;
+    color: #ef4444;
+}
+
+.target-label-77 {
+    top: 23%;
+    color: #22c55e;
+}
+
+.target-label-80 {
+    top: 20%;
+    color: #22c55e;
+}
+
+.target-label-85 {
+    top: 15%;
+    color: #22c55e;
+}
+
+/* Custom tooltip styles */
+.custom-tooltip {
+    position: fixed;
+    background: #1f2937;
+    color: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 10000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    pointer-events: none;
+}
+
+/* Instant tooltip styles for achievement lines */
+.tooltip-trigger {
+    position: relative;
+}
+
+.tooltip-trigger .tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1f2937;
+    color: white;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    right: 0;
+    margin-bottom: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: opacity 0s, visibility 0s;
+    pointer-events: none;
+}
+
+.tooltip-trigger:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0s, visibility 0s;
+}
