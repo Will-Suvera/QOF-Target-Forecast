@@ -27,36 +27,33 @@ export function Indicators() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Welcome Section */}
-          <div className="mb-8 flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello, Pilly</h1>
-              <div className="text-lg text-gray-600">{formattedDate}</div>
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold text-gray-900">Hello, Pilly 👋</h1>
+              <div className="text-sm text-gray-500">{formattedDate}</div>
             </div>
 
-            {/* Practice Information Card */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-5 py-4">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                <div className="flex items-center">
-                  <span className="text-xs font-medium text-gray-500 w-32">GP Practice Name:</span>
-                  <span className="text-sm font-normal text-gray-900">
-                    Maltings Surgery (E82031)
-                  </span>
+            {/* Practice Information Bar */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2.5">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-gray-500">Practice:</span>
+                  <span className="text-gray-900">Maltings Surgery (E82031)</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="text-xs font-medium text-gray-500 w-28">PCN Name:</span>
-                  <span className="text-sm font-normal text-gray-900">
-                    Abbey Health PCN (U06079)
-                  </span>
+                <div className="h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-gray-500">ICB:</span>
+                  <span className="text-gray-900">NHS Hertfordshire and West Essex ICB (06N)</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="text-xs font-medium text-gray-500 w-32">ICB Name:</span>
-                  <span className="text-sm font-normal text-gray-900">
-                    NHS Hertfordshire and West Essex ICB (06N)
-                  </span>
+                <div className="h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-gray-500">PCN:</span>
+                  <span className="text-gray-900">Abbey Health PCN (U06079)</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="text-xs font-medium text-gray-500 w-32">Patient List Size:</span>
-                  <span className="text-sm font-semibold text-gray-900">19,026</span>
+                <div className="h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-gray-500">Patients:</span>
+                  <span className="font-semibold text-gray-900">19,026</span>
                 </div>
               </div>
             </div>
