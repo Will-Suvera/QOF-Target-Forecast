@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(gh api:*)",
+      "Bash(gh pr view:*)",
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(git clean:*)",
+      "Bash(git pull:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset:*)",
+      "Bash(grep:*)",
+      "Bash(mv:*)",
+      "Bash(pnpm i:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm pretty:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm mcp:snomed:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:digital.nhs.uk)",
+      "WebSearch",
+      "mcp__ide__getDiagnostics",
+      "Bash(git merge:*)",
+      "Bash(git restore:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh run view:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
