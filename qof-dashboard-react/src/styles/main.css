@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Frosted Glass Components */
+@layer components {
+  .card-glass {
+    @apply bg-white/70 backdrop-blur-[12px] border border-gray-200 rounded-lg shadow-sm;
+  }
+  
+  .card-glass-hover {
+    @apply bg-white/70 backdrop-blur-[12px] border border-gray-200 rounded-lg shadow-sm transition-all duration-300;
+  }
+  
+  .card-glass-hover:hover {
+    @apply bg-white/80 shadow-md;
+  }
+
+  .card-glass-solid {
+    @apply bg-white/90 backdrop-blur-[12px] border border-gray-200 rounded-lg shadow-sm;
+  }
+}
+
 /* Custom styles for circular progress indicators */
 .circular-progress {
     width: 120px;

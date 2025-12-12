@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Eye, AlertTriangle } from 'lucide-react';
 import { getSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
 
 interface IndicatorsTargetCardsProps {
@@ -246,7 +247,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
       {/* Target Header */}
       {targetCode === 'HYP008' && (
         <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">QOF_HYP008</h3>
+          <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-2">QOF_HYP008</h3>
           <p className="text-sm text-gray-600">
             The percentage of patients aged 79 years or under with hypertension in whom the last
             blood pressure reading (measured in the preceding 12 months) is 140/90 mmHg or less (or
@@ -266,25 +267,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
             </p>
           </div>
           <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
+            <Eye className="w-4 h-4 mr-2" />
             View in Planner
           </button>
         </div>
@@ -299,7 +282,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
           {targetCode === 'HYP008' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* HYP008 Register Size */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white/50 border border-glass rounded-lg p-4">
                 <div className="text-sm font-medium text-gray-700 mb-2">HYP008 Register Size</div>
                 <div className="text-2xl font-bold text-gray-900 mb-3">{getHYP008RegisterSize()}</div>
                 <div className="text-xs text-gray-600">
@@ -319,7 +302,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
               </div>
 
               {/* Clinical Completion Number */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white/50 border border-glass rounded-lg p-4">
                 <div className="text-sm font-medium text-gray-700 mb-2">Clinical Completion Number</div>
                 <div className="text-2xl font-bold text-gray-900 mb-3">{getClinicalCompletionNumber()}</div>
                 <div className="text-xs text-gray-600">
@@ -340,7 +323,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
               </div>
 
               {/* Invited Exception Reporting Number */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white/50 border border-glass rounded-lg p-4">
                 <div className="text-sm font-medium text-gray-700 mb-2">
                   Invited Exception Reporting Number
                 </div>
@@ -363,7 +346,7 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
               </div>
 
               {/* Not Yet Invited Number */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white/50 border border-glass rounded-lg p-4">
                 <div className="text-sm font-medium text-gray-700 mb-2">Not Yet Invited Number</div>
                 <div className="text-2xl font-bold text-gray-900 mb-3">{getNotYetInvitedNumber()}</div>
                 <div className="text-xs text-gray-600">
@@ -465,24 +448,14 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
         </div>
 
         {/* Revenue Left on Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Revenue Left on Table</h4>
+        <div className="card-glass p-6">
+          <h4 className="text-base font-semibold text-gray-900 leading-tight mb-4">Revenue Left on Table</h4>
           <div className="text-4xl font-bold text-gray-900 mb-4">
             £{getRevenueLeftOnTable().toLocaleString()}
           </div>
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
             <div className="flex items-start">
-              <svg
-                className="w-5 h-5 text-orange-600 mr-2 mt-0.5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <AlertTriangle className="w-5 h-5 text-orange-600 mr-2 mt-0.5" />
               <div>
                 <div className="text-sm font-medium text-orange-800">
                   {getUnclaimedPoints()} unclaimed QOF points from {getRemainingPatients()} patients
@@ -491,11 +464,11 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white border border-gray-200 rounded-lg p-3">
+            <div className="bg-white/50 border border-glass rounded-lg p-3">
               <div className="text-xs text-gray-600 mb-1">Unclaimed Points</div>
               <div className="text-xl font-bold text-gray-900">{getUnclaimedPoints()}</div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3">
+            <div className="bg-white/50 border border-glass rounded-lg p-3">
               <div className="text-xs text-gray-600 mb-1">Patients Remaining</div>
               <div className="text-xl font-bold text-gray-900">{getRemainingPatients()}</div>
             </div>
@@ -506,8 +479,8 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
       {/* Clinical, Exception, and Resource Planning Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Clinical Completion Analysis */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-1">Clinical Completion Analysis</h4>
+        <div className="card-glass p-6">
+          <h4 className="text-base font-semibold text-gray-900 leading-tight mb-1">Clinical Completion Analysis</h4>
           <p className="text-sm text-gray-600 mb-4">Patients clinically complete</p>
 
           {targetCode === 'HYP008' && (
@@ -589,8 +562,8 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
         </div>
 
         {/* Exception Reporting Analysis */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-1">Exception Reporting Analysis</h4>
+        <div className="card-glass p-6">
+          <h4 className="text-base font-semibold text-gray-900 leading-tight mb-1">Exception Reporting Analysis</h4>
           <p className="text-sm text-gray-600 mb-4">Patients exception reported</p>
 
           {targetCode === 'HYP008' && (
@@ -704,8 +677,8 @@ export function IndicatorsTargetCards({ condition: _condition, targetCode }: Ind
         </div>
 
         {/* Resource Planning */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Resource Planning</h4>
+        <div className="card-glass p-6">
+          <h4 className="text-base font-semibold text-gray-900 leading-tight mb-4">Resource Planning</h4>
           <div className="text-3xl font-bold text-gray-900 mb-2">
             {getRemainingPatients().toLocaleString()} appointments
           </div>

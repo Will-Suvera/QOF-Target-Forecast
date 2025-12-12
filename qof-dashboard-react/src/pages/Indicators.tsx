@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
 import { IndicatorsContent } from '../components/IndicatorsContent';
@@ -34,7 +35,7 @@ export function Indicators() {
             </div>
 
             {/* Practice Information Bar */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2.5">
+            <div className="card-glass px-4 py-2.5">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">Practice:</span>
@@ -69,19 +70,7 @@ export function Indicators() {
                 to="/"
                 className="inline-flex items-center text-gray-600 hover:text-gray-900 text-sm font-medium"
               >
-                <svg
-                  className="w-4 h-4 mr-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
                 Back to Dashboard
               </Link>
             </div>
@@ -91,7 +80,7 @@ export function Indicators() {
           {condition ? (
             <IndicatorsContent condition={condition} />
           ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="card-glass p-6">
               <p className="text-gray-600">
                 No condition selected. Please select a condition from the dashboard.
               </p>

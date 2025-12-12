@@ -143,11 +143,11 @@ export function HeroSection({ condition }: HeroSectionProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
       {/* QOF Forecast Card */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2">
-        <h3 className="text-xl font-semibold text-gray-900 mb-1">
+      <div className="card-glass p-6 lg:col-span-2">
+        <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-1">
           Your forecast for this QOF year
         </h3>
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-gray-600 leading-normal mb-6">
           Showing potential QOF achievement, based on recalling method.
         </p>
 
@@ -161,12 +161,12 @@ export function HeroSection({ condition }: HeroSectionProps) {
               <div>
                 <div className="flex items-baseline mb-2 justify-between">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-semibold text-blue-800">
+                    <span className="text-base font-semibold text-blue-800 leading-tight">
                       {pointsAchieved}
                     </span>
-                    <span className="text-sm font-medium text-blue-800">points</span>
+                    <span className="text-sm font-medium text-blue-800 leading-normal">points</span>
                   </div>
-                  <span className="text-sm font-medium text-blue-800">out of {maxPoints}</span>
+                  <span className="text-sm font-medium text-blue-800 leading-normal">out of {maxPoints}</span>
                 </div>
                 <div className="w-full bg-blue-200 rounded-md h-3 relative overflow-visible">
                   <div
@@ -179,8 +179,8 @@ export function HeroSection({ condition }: HeroSectionProps) {
               {/* Work Done */}
               <div>
                 <div className="flex items-baseline mb-2 gap-2">
-                  <span className={`text-3xl font-medium ${workDoneColors.text}`}>{forecast.current}%</span>
-                  <span className={`text-sm font-medium ${workDoneColors.text}`}>work done so far</span>
+                  <span className={`text-base font-medium ${workDoneColors.text} leading-tight`}>{forecast.current}%</span>
+                  <span className={`text-sm font-medium ${workDoneColors.text} leading-normal`}>work done so far</span>
                 </div>
                 <div className="relative">
                   <div className={`${workDoneColors.background} w-full rounded-md h-3 relative overflow-visible`}>
@@ -211,7 +211,7 @@ export function HeroSection({ condition }: HeroSectionProps) {
                     />
                     {/* Expected at Time of Year Label - positioned based on arrow position */}
                     <div 
-                      className="text-sm text-gray-500 font-medium whitespace-nowrap absolute"
+                      className="text-sm text-gray-500 font-medium whitespace-nowrap absolute leading-normal"
                       style={{
                         ...(expectedWorkDonePercentage >= 50 
                           ? { right: '30px', textAlign: 'right' }
@@ -233,12 +233,12 @@ export function HeroSection({ condition }: HeroSectionProps) {
               <div className="flex items-baseline mb-2 justify-between">
                 <div className="flex items-baseline gap-2">
 
-                  <span className="text-3xl font-semibold text-green-700">
+                  <span className="text-base font-semibold text-green-700 leading-tight">
                     £{earnedSoFar.toLocaleString()}
                   </span>
-                  <span className="text-sm font-medium text-green-700">earned so far</span>
+                  <span className="text-sm font-medium text-green-700 leading-normal">earned so far</span>
                 </div>
-                <span className="text-sm font-medium text-green-700">out of £{maxEarned.toLocaleString()}</span>
+                <span className="text-sm font-medium text-green-700 leading-normal">out of £{maxEarned.toLocaleString()}</span>
               </div>
               <div className="w-full rounded-md h-6 relative overflow-visible flex">
                 {/* Section 1: Earned so far (solid green) */}
@@ -265,10 +265,10 @@ export function HeroSection({ condition }: HeroSectionProps) {
               <div className="mt-6 flex gap-6">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-3 bg-green-100 rounded border border-green-400"></div>
-                  <span className="text-gray-700 text-lg font-medium">
+                  <span className="text-gray-700 text-base font-medium leading-tight">
                     £{remainingToEarnAmount.toLocaleString()}
                   </span>
-                  <span className="text-gray-700 text-sm">to earn from diagnosed patients</span>
+                  <span className="text-gray-700 text-sm leading-normal">to earn from diagnosed patients</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div 
@@ -277,10 +277,10 @@ export function HeroSection({ condition }: HeroSectionProps) {
                       background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 4px)',
                     }}
                   ></div>
-                  <span className="text-gray-700 text-lg font-medium">
+                  <span className="text-gray-700 text-base font-medium leading-tight">
                     £{prevalenceOpportunityAmount.toLocaleString()}
                   </span>
-                  <span className="text-gray-700 text-sm">from undiagnosed patients</span>
+                  <span className="text-gray-700 text-sm leading-normal">from undiagnosed patients</span>
                 </div>
               </div>
             </div>
@@ -288,51 +288,43 @@ export function HeroSection({ condition }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Estimated Value Card */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      {/* Potential Cost Savings Card */}
+      <div className="card-glass p-5">
+        {/* Headline */}
+        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">Potential cost</h3>
 
-        {/* Current Value Section */}
-        <div className="mb-3">
-          <div className="bg-white border border-gray-200 rounded-lg p-3">
-            <h3 className="text-base font-semibold text-gray-700 mb-2">Current value</h3>
-            <div className="text-xl font-bold text-gray-500">
-              £{forecast.currentValue.toLocaleString()}
+        {/* First row: Original cost (strikethrough) + Suvera cost button */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="text-3xl font-bold text-gray-500 line-through leading-tight">
+            £70,000
+          </div>
+          
+            <div className="text-3xl font-bold text-green-700 leading-tight">
+              £62,000
             </div>
+        </div>
+
+        {/* Smaller section: Breakdown */}
+        <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
+          {/* Suvera cost alone */}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-700 leading-normal">Suvera clinic cost</span>
+            <span className="font-semibold text-gray-900 leading-normal">
+              £72,000
+            </span>
+          </div>
+          {/* Additional reduction from undiagnosed patients */}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-700 leading-normal">Additional reduction (d.u. prevalence)</span>
+            <span className="font-semibold text-green-600 leading-normal">
+              -£10,000
+            </span>
           </div>
         </div>
 
-        {/* Potential Value Section */}
-        <div className="mb-3">
-          <h3 className="text-base font-semibold text-green-700 mb-2">Potential value</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {/* Planner */}
-            <div className="bg-white border border-gray-200 rounded-lg p-3">
-              <div className="text-sm text-gray-600 mb-0.5">Planner</div>
-              <div className="text-3xl font-semibold text-green-600">
-                £{forecast.plannerValue.toLocaleString()}
-              </div>
-            </div>
-
-            {/* Suvera Clinic */}
-            <div className="bg-white border border-gray-200 rounded-lg p-3">
-              <div className="text-xs text-gray-600 mb-0.5">Suvera Clinic</div>
-              <div className="text-3xl font-semibold text-green-600">
-                £{forecast.suveraValue.toLocaleString()}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button className="w-full bg-blue-600 text-white px-3 py-1.5 rounded-md text-md font-medium hover:bg-blue-700 flex items-center justify-center">
-          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          View pricing breakdown
+        {/* CTA Button */}
+        <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
+          Save £8,000 today!
         </button>
       </div>
     </div>
