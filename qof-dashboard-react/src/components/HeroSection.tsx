@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { useForecastData } from '../hooks/useForecastData';
 import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
 
@@ -50,6 +51,24 @@ function calculateQOFPoints(
 
 export function HeroSection({ condition }: HeroSectionProps) {
   const { forecast: baseForecast } = useForecastData(condition);
+  const [isCompressed, setIsCompressed] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Scroll detection logic
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const heroTop = heroRef.current.getBoundingClientRect().top;
+        const headerHeight = 56; // Approximate header height
+        
+        // Compress when hero would scroll past the header
+        setIsCompressed(heroTop <= headerHeight);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const forecast = useMemo(() => {
     if (condition === 'hypertension') {
@@ -141,7 +160,80 @@ export function HeroSection({ condition }: HeroSectionProps) {
   }, [prevalenceOpportunityPercentage, maxEarned]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div 
+      ref={heroRef}
+      className={`sticky top-14 z-20 transition-all duration-300 ease-in-out mb-8 ${
+        isCompressed ? 'bg-white/95 backdrop-blur-sm shadow-md' : ''
+      }`}
+      style={{
+        marginLeft: isCompressed ? '-1.5rem' : '0',
+        marginRight: isCompressed ? '-1.5rem' : '0',
+        paddingLeft: isCompressed ? '1.5rem' : '0',
+        paddingRight: isCompressed ? '1.5rem' : '0',
+      }}
+    >
+      {isCompressed ? (
+        /* Compressed State */
+        <div className="py-3 px-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between gap-4">
+            {/* Left: Key Metrics */}
+            <div className="flex items-center gap-6 flex-1 min-w-0">
+              {/* Points */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg font-semibold text-blue-800">{pointsAchieved}</span>
+                  <span className="text-xs text-blue-700">/ {maxPoints}</span>
+                </div>
+                <div className="w-16 h-2 bg-blue-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-800 rounded-full transition-all"
+                    style={{ width: `${pointsPercentage}%` }}
+                  />
+                </div>
+                <span className="text-xs text-gray-600">pts</span>
+              </div>
+
+              {/* Work Done */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-1">
+                  <span className={`text-lg font-semibold ${workDoneColors.text}`}>{forecast.current}%</span>
+                </div>
+                <div className={`w-16 h-2 ${workDoneColors.background} rounded-full overflow-hidden`}>
+                  <div 
+                    className={`h-full ${workDoneColors.bar} rounded-full transition-all`}
+                    style={{ width: `${forecast.current}%` }}
+                  />
+                </div>
+                <span className="text-xs text-gray-600">done</span>
+              </div>
+
+              {/* Earned */}
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-semibold text-green-700">£{earnedSoFar.toLocaleString()}</span>
+                <span className="text-xs text-gray-600">earned</span>
+              </div>
+
+              {/* Expand Icon */}
+              <button 
+                onClick={() => setIsCompressed(false)}
+                className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Expand hero section"
+              >
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Right: CTA Button */}
+            <div className="flex-shrink-0">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
+                Save £8,000 today!
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Expanded State */
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* QOF Forecast Card */}
       <div className="card-glass p-6 lg:col-span-2">
         <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-1">
@@ -291,7 +383,7 @@ export function HeroSection({ condition }: HeroSectionProps) {
       {/* Potential Cost Savings Card */}
       <div className="card-glass p-5">
         {/* Headline */}
-        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">Potential cost</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">Cost for completing QOF</h3>
 
         {/* First row: Original cost (strikethrough) + Suvera cost button */}
         <div className="flex items-center gap-3 mb-4">
@@ -327,6 +419,8 @@ export function HeroSection({ condition }: HeroSectionProps) {
           Save £8,000 today!
         </button>
       </div>
+        </div>
+      )}
     </div>
   );
 }
