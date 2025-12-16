@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { Eye, ChevronRight } from 'lucide-react';
 import { getSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
 import { IndicatorsTargetCards } from './IndicatorsTargetCards';
 
@@ -204,9 +205,9 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <div className="card-glass p-6 mb-6">
       <div className="flex justify-between items-center mb-6 relative">
-        <h3 className="text-xl font-semibold text-gray-900">Summary</h3>
+        <h3 className="text-lg font-semibold text-gray-900 leading-tight">Summary</h3>
 
         {/* Condition Register Prevalence Card (Centered) - Only for Hypertension */}
         {conditionData.showPrevalence && (
@@ -235,15 +236,7 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
 
         {/* View in Planner Button */}
         <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
+          <Eye className="w-4 h-4 mr-2" />
           View in Planner
         </button>
       </div>
@@ -294,14 +287,9 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
                   }}
                   className="flex items-center text-sm font-medium text-gray-900 w-24 hover:text-blue-600 transition-colors"
                 >
-                  <svg
+                  <ChevronRight
                     className={`w-4 h-4 mr-1 transition-transform ${expandedSections[target.code] === true ? 'rotate-90' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  />
                   {target.code}
                 </button>
                 <div
@@ -403,7 +391,7 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
               {/* Expanded Target Content */}
               {expandedSections[target.code] === true && (
                 <div className="mt-6 -mx-6 -mb-6">
-                  <div className="bg-white border-t border-gray-200">
+                  <div className="bg-white/50 border-t border-glass">
                     <IndicatorsTargetCards condition={condition} targetCode={target.code} />
                   </div>
                 </div>
