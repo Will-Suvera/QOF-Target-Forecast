@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Expand, Minimize } from 'lucide-react';
 import { useForecastData } from '../hooks/useForecastData';
 import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
 
@@ -52,23 +52,66 @@ function calculateQOFPoints(
 export function HeroSection({ condition }: HeroSectionProps) {
   const { forecast: baseForecast } = useForecastData(condition);
   const [isCompressed, setIsCompressed] = useState(false);
+  const [manuallyExpanded, setManuallyExpanded] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
   // Scroll detection logic
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      if (heroRef.current) {
-        const heroTop = heroRef.current.getBoundingClientRect().top;
-        const headerHeight = 56; // Approximate header height
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Reset everything if user scrolls back to top
+          if (currentScrollY < 50) {
+            setHasScrolled(false);
+            setManuallyExpanded(false);
+            setIsCompressed(false);
+            ticking = false;
+            return;
+          }
+          
+          // User has scrolled down
+          const scrolled = currentScrollY > 50;
+          setHasScrolled(scrolled);
+          
+          if (scrolled && heroRef.current) {
+            const rect = heroRef.current.getBoundingClientRect();
+            const heroHeight = rect.height;
+            const heroTop = rect.top;
+            const stickyTopPosition = 16; // top-4 = 16px (1rem)
+            
+            // Check if hero is at or past the sticky position
+            const isAtStickyPosition = heroTop <= stickyTopPosition;
+            
+            if (manuallyExpanded) {
+              // User manually expanded it, keep it expanded
+              setIsCompressed(false);
+            } else if (isAtStickyPosition) {
+              // Hero is now sticky. Check if we should compress based on scroll distance.
+              // Compress when user has scrolled enough that most of hero height has passed
+              const shouldCompress = currentScrollY > (heroHeight * 0.7);
+              setIsCompressed(shouldCompress);
+            } else {
+              // Hero is not at sticky position yet (user near top), keep expanded
+              setIsCompressed(false);
+            }
+          }
+          
+          ticking = false;
+        });
         
-        // Compress when hero would scroll past the header
-        setIsCompressed(heroTop <= headerHeight);
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Check initial scroll position
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [manuallyExpanded]);
 
   const forecast = useMemo(() => {
     if (condition === 'hypertension') {
@@ -162,7 +205,9 @@ export function HeroSection({ condition }: HeroSectionProps) {
   return (
     <div 
       ref={heroRef}
-      className={`sticky top-14 z-20 transition-all duration-300 ease-in-out mb-8 ${
+      className={`z-20 mb-8 ${
+        hasScrolled ? 'sticky top-4' : ''
+      } ${
         isCompressed ? 'bg-white/95 backdrop-blur-sm shadow-md' : ''
       }`}
       style={{
@@ -174,53 +219,123 @@ export function HeroSection({ condition }: HeroSectionProps) {
     >
       {isCompressed ? (
         /* Compressed State */
-        <div className="py-3 px-6 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-4">
-            {/* Left: Key Metrics */}
-            <div className="flex items-center gap-6 flex-1 min-w-0">
+        <div className="py-3 px-0 mx-auto">
+          <div className="flex items-center justify-between">
+            {/* Toggle Icon */}
+            <button 
+              onClick={() => {
+                setIsCompressed(false);
+                setManuallyExpanded(true);
+              }}
+              className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+              aria-label="Expand hero section"
+            >
+              <Expand className="w-4 h-4 text-gray-500" />
+            </button>
+            {/* Left: Progress Bars */}
+            <div className="flex items-center gap-4 flex-1 min-w-0">
               {/* Points */}
-              <div className="flex items-center gap-2">
+              <div className="group relative flex items-center gap-2">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-lg font-semibold text-blue-800">{pointsAchieved}</span>
+                  <span className="text-base font-semibold text-blue-800">{pointsAchieved}</span>
                   <span className="text-xs text-blue-700">/ {maxPoints}</span>
                 </div>
-                <div className="w-16 h-2 bg-blue-200 rounded-full overflow-hidden">
+                <div className="w-20 bg-blue-200 rounded-full h-2.5 overflow-hidden cursor-pointer">
                   <div 
                     className="h-full bg-blue-800 rounded-full transition-all"
                     style={{ width: `${pointsPercentage}%` }}
                   />
                 </div>
                 <span className="text-xs text-gray-600">pts</span>
+                {/* Hover Tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
+                  {Math.round(pointsPercentage)}% of maximum points
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                </div>
               </div>
 
               {/* Work Done */}
-              <div className="flex items-center gap-2">
+              <div className="group relative flex items-center gap-2">
                 <div className="flex items-baseline gap-1">
-                  <span className={`text-lg font-semibold ${workDoneColors.text}`}>{forecast.current}%</span>
+                  <span className={`text-base font-semibold ${workDoneColors.text}`}>{forecast.current}%</span>
                 </div>
-                <div className={`w-16 h-2 ${workDoneColors.background} rounded-full overflow-hidden`}>
-                  <div 
-                    className={`h-full ${workDoneColors.bar} rounded-full transition-all`}
-                    style={{ width: `${forecast.current}%` }}
-                  />
+                <div className="relative">
+                  <div className={`w-20 ${workDoneColors.background} rounded-full h-2.5 overflow-visible cursor-pointer`}>
+                    <div 
+                      className={`h-full ${workDoneColors.bar} rounded-full transition-all`}
+                      style={{ width: `${forecast.current}%` }}
+                    />
+                  </div>
+                  {/* Arrow Indicator for Expected at Time of Year */}
+                  <div
+                    className="absolute z-10 pointer-events-none"
+                    style={{
+                      left: `${expectedWorkDonePercentage}%`,
+                      top: '100%',
+                      marginTop: '2px',
+                      transform: 'translateX(-50%)',
+                    }}
+                  >
+                    <div
+                      className="w-0 h-0"
+                      style={{
+                        borderLeft: '4px solid transparent',
+                        borderRight: '4px solid transparent',
+                        borderBottom: '6px solid #6b7280',
+                      }}
+                    />
+                  </div>
                 </div>
                 <span className="text-xs text-gray-600">done</span>
+                {/* Hover Tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
+                  Target for {new Date().toLocaleDateString('en-GB', { month: 'short' })}: {Math.round(expectedWorkDonePercentage * 10) / 10}%
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                </div>
               </div>
 
               {/* Earned */}
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-green-700">£{earnedSoFar.toLocaleString()}</span>
+              <div className="group relative flex items-center gap-2">
+                <span className="text-base font-semibold text-green-700">£{earnedSoFar.toLocaleString()}</span>
+                <div className="w-20 rounded-full h-2.5 overflow-hidden cursor-pointer flex">
+                  <div 
+                    className="h-full bg-green-700 transition-all"
+                    style={{ width: `${earnedPercentage}%` }}
+                  />
+                  <div 
+                    className="h-full bg-green-100"
+                    style={{ width: `${remainingToEarnPercentage}%` }}
+                  />
+                  <div 
+                    className="h-full"
+                    style={{
+                      width: `${prevalenceOpportunityPercentage}%`,
+                      background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 3px)',
+                    }}
+                  />
+                </div>
                 <span className="text-xs text-gray-600">earned</span>
+                {/* Hover Tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 min-w-max">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-2 bg-green-700 rounded-sm flex-shrink-0"></div>
+                      <span>£{earnedSoFar.toLocaleString()} earned so far</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-2 bg-green-100 rounded-sm flex-shrink-0"></div>
+                      <span>£{remainingToEarnAmount.toLocaleString()} to earn from diagnosed patients</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-2 rounded-sm flex-shrink-0" style={{
+                        background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 1px, #16a34a 1px, #16a34a 2px)'
+                      }}></div>
+                      <span>£{prevalenceOpportunityAmount.toLocaleString()} from undiagnosed patients</span>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                </div>
               </div>
-
-              {/* Expand Icon */}
-              <button 
-                onClick={() => setIsCompressed(false)}
-                className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="Expand hero section"
-              >
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              </button>
             </div>
 
             {/* Right: CTA Button */}
@@ -233,12 +348,32 @@ export function HeroSection({ condition }: HeroSectionProps) {
         </div>
       ) : (
         /* Expanded State */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div 
+          className={manuallyExpanded && hasScrolled ? "bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg" : ""}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* QOF Forecast Card */}
-      <div className="card-glass p-6 lg:col-span-2">
-        <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-1">
-          Your forecast for this QOF year
-        </h3>
+      <div className="card-glass p-6 lg:col-span-2 relative">
+        <div className="flex items-start justify-between mb-1">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+              Your forecast for this QOF year
+            </h3>
+          </div>
+          {/* Minimize Button - only show if user has scrolled */}
+          {hasScrolled && (
+            <button 
+              onClick={() => {
+                setIsCompressed(true);
+                setManuallyExpanded(false);
+              }}
+              className="p-1 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
+              aria-label="Minimize hero section"
+            >
+              image.png<Minimize className="w-4 h-4 text-gray-600" strokeWidth={2.5} />
+            </button>
+          )}
+        </div>
         <p className="text-sm text-gray-600 leading-normal mb-6">
           Showing potential QOF achievement, based on recalling method.
         </p>
@@ -419,6 +554,7 @@ export function HeroSection({ condition }: HeroSectionProps) {
           Save £8,000 today!
         </button>
       </div>
+          </div>
         </div>
       )}
     </div>

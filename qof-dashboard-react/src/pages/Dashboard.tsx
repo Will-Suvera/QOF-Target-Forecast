@@ -6,7 +6,7 @@ import { IndicatorsContent } from '../components/IndicatorsContent';
 import { HospitalIcon, Check, X, Plus } from 'lucide-react';
 import {
   clinicalDomainConditions, 
-  publicHealthConditions,
+  publicHealthConditions, // Used in commented-out Public Health Domain section
   clinicalConditions,
   type ConditionKey,
 } from '../data/conditionMappings';
@@ -22,27 +22,23 @@ function ConditionCard({ condition, isExpanded, onToggle }: ConditionCardProps) 
   return (
     <button
       onClick={onToggle}
-      className={`inline-flex px-3 py-2.5 rounded-full border transition-all duration-200 max-w-[200px] ${
+      className={`inline-flex items-center gap-2 px-1.5 py-1.5 rounded-lg border transition-all duration-200 ${
         isExpanded 
           ? 'bg-[#E6EBF2] border-[#ACBBD4] text-brand-dark shadow-sm' 
-          : 'bg-white border-[#E6EBF2] text-gray-900 hover:border-[#ACBBD4]'
+          : 'bg-white border-gray-200 text-gray-700 hover:border-[#ACBBD4] hover:bg-gray-50'
       }`}
     >
-      <div className="flex items-center justify-between gap-2 min-w-0 w-full">
-        <div className="flex items-center gap-2 min-w-0">
-          {isExpanded ? (
-            <Check className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
-          ) : (
-            <Plus className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
-          )}
-          <h4 className={`text-xs font-medium leading-snug text-left truncate ${isExpanded ? 'text-brand-dark' : 'text-gray-900'}`}>
-            {info.title}
-          </h4>
-        </div>
-        <span className={`text-sm font-semibold leading-normal flex-shrink-0 ${isExpanded ? 'text-brand-dark' : 'text-gray-900'}`}>
-          {info.percentage}%
-        </span>
-      </div>
+      {isExpanded ? (
+        <Check className="w-4 h-4 flex-shrink-0" strokeWidth={2.5} />
+      ) : (
+        <Plus className="w-4 h-4 flex-shrink-0 text-gray-400" strokeWidth={2.5} />
+      )}
+      <span className={`text-sm font-medium ${isExpanded ? 'text-brand-dark' : 'text-gray-700'}`}>
+        {info.title}
+      </span>
+      <span className={`text-sm font-semibold flex-shrink-0 ${isExpanded ? 'text-brand-dark' : 'text-gray-500'}`}>
+        {info.percentage}%
+      </span>
     </button>
   );
 }
@@ -59,8 +55,10 @@ function formatDate(): string {
 }
 
 export function Dashboard() {
-  // Initialize with all conditions selected
-  const allConditions = useMemo(() => [...clinicalDomainConditions, ...publicHealthConditions], []);
+  // Initialize with all clinical domain conditions selected
+  // Note: Public Health Domain is commented out, so only using clinicalDomainConditions
+  const allConditions = useMemo(() => [...clinicalDomainConditions], []);
+  // const allConditions = useMemo(() => [...clinicalDomainConditions, ...publicHealthConditions], []); // Original with Public Health
   const [expandedConditions, setExpandedConditions] = useState<ConditionKey[]>(allConditions);
   const formattedDate = useMemo(() => formatDate(), []);
 
@@ -89,10 +87,10 @@ export function Dashboard() {
 
   const handleToggleFilters = () => {
     if (expandedConditions.length > 0) {
-      // Clear all
+      // Clear all filters
       setExpandedConditions([]);
     } else {
-      // Select all
+      // Select all filters
       setExpandedConditions(allConditions);
     }
   };
@@ -127,45 +125,46 @@ export function Dashboard() {
           {/* Hero Section */}
           <HeroSection condition={firstExpandedCondition} />
 
-          {/* Clinical Domain Section */}
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 leading-tight">Clinical Domain</h2>
-            <button
-              onClick={handleToggleFilters}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              {expandedConditions.length > 0 ? (
-                <>
-                  <X className="w-3.5 h-3.5" />
-                  Clear All
-                </>
-              ) : (
-                <>
-                  <Check className="w-3.5 h-3.5" />
-                  Select All
-                </>
-              )}
-            </button>
+          {/* Clinical Domain Filters */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 leading-tight">Filter conditions</h2>
+              <button
+                onClick={handleToggleFilters}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                {expandedConditions.length > 0 ? (
+                  <>
+                    <X className="w-3.5 h-3.5" />
+                    Clear Filters
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    Select All
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Filter Chips */}
+            <div className="flex flex-wrap gap-2">
+              {clinicalDomainConditions.map((condition) => (
+                <ConditionCard
+                  key={condition}
+                  condition={condition}
+                  isExpanded={isConditionExpanded(condition)}
+                  onToggle={() => { toggleCondition(condition); }}
+                />
+              ))}
+            </div>
           </div>
 
-          {/* Clinical Domain Cards */}
-          <div className="flex flex-wrap gap-3">
-            {clinicalDomainConditions.map((condition) => (
-              <ConditionCard
-                key={condition}
-                condition={condition}
-                isExpanded={isConditionExpanded(condition)}
-                onToggle={() => { toggleCondition(condition); }}
-              />
-            ))}
-          </div>
-
-          {/* Public Health Domain Section */}
-          <div className="mt-12 mb-6">
+          {/* Public Health Domain Section - Commented Out */}
+          {/* <div className="mt-12 mb-6">
             <h2 className="text-lg font-semibold text-gray-900 leading-tight">Public Health Domain</h2>
           </div>
 
-          {/* Public Health Cards */}
           <div className="flex flex-wrap gap-3">
             {publicHealthConditions.map((condition) => (
               <ConditionCard
@@ -175,7 +174,7 @@ export function Dashboard() {
                 onToggle={() => { toggleCondition(condition); }}
               />
             ))}
-          </div>
+          </div> */}
 
           {/* Expanded Conditions Content */}
           {expandedConditions.length > 0 && (

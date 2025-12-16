@@ -90,66 +90,30 @@ export function Summary() {
         {/* Key Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="card-glass p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold text-sm">Q</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total QOF Points</p>
-                <p className="text-2xl font-semibold text-gray-900">564</p>
-              </div>
-            </div>
+            <p className="text-sm font-medium text-gray-500 leading-normal">Total QOF Points</p>
+            <p className="text-2xl font-semibold text-gray-900 leading-tight">564</p>
           </div>
 
           <div className="card-glass p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-green-600 font-semibold text-sm">✓</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Completed Targets</p>
-                <p className="text-2xl font-semibold text-gray-900">42</p>
-              </div>
-            </div>
+            <p className="text-sm font-medium text-gray-500 leading-normal">Completed Targets</p>
+            <p className="text-2xl font-semibold text-gray-900 leading-tight">42</p>
           </div>
 
           <div className="card-glass p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <span className="text-yellow-600 font-semibold text-sm">⏳</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">In Progress</p>
-                <p className="text-2xl font-semibold text-gray-900">8</p>
-              </div>
-            </div>
+            <p className="text-sm font-medium text-gray-500 leading-normal">In Progress</p>
+            <p className="text-2xl font-semibold text-gray-900 leading-tight">8</p>
           </div>
 
           <div className="card-glass p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <span className="text-red-600 font-semibold text-sm">⚠</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">At Risk</p>
-                <p className="text-2xl font-semibold text-gray-900">4</p>
-              </div>
-            </div>
+            <p className="text-sm font-medium text-gray-500 leading-normal">At Risk</p>
+            <p className="text-2xl font-semibold text-gray-900 leading-tight">4</p>
           </div>
         </div>
 
         {/* Performance Overview Table */}
         <div className="card-glass">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">QOF Performance Overview</h3>
+          <div className="px-6 py-4 border-b border-gray-200 mb-0">
+            <h3 className="text-lg font-semibold text-gray-900 leading-tight">QOF Performance Overview</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -206,7 +170,7 @@ export function Summary() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(target.status)}`}
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-md ${getStatusClass(target.status)}`}
                       >
                         {target.status}
                       </span>
