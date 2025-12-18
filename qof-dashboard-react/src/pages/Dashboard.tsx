@@ -6,7 +6,6 @@ import { IndicatorsContent } from '../components/IndicatorsContent';
 import { HospitalIcon, Check, X, Plus } from 'lucide-react';
 import {
   clinicalDomainConditions, 
-  publicHealthConditions, // Used in commented-out Public Health Domain section
   clinicalConditions,
   type ConditionKey,
 } from '../data/conditionMappings';
