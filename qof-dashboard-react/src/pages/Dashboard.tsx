@@ -7,7 +7,6 @@ import { HospitalIcon, Check, X, Plus } from 'lucide-react';
 import { type ViewMode } from '../hooks/useForecastData';
 import {
   clinicalDomainConditions, 
-  publicHealthConditions, // Used in commented-out Public Health Domain section
   clinicalConditions,
   type ConditionKey,
 } from '../data/conditionMappings';
