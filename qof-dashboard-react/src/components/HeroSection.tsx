@@ -1,10 +1,12 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { Expand, Minimize } from 'lucide-react';
-import { useForecastData } from '../hooks/useForecastData';
+import { useForecastData, type ViewMode } from '../hooks/useForecastData';
 import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
 
 interface HeroSectionProps {
   condition?: string | null | undefined;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
 interface HeroSummaryData {
@@ -16,7 +18,27 @@ interface HeroSummaryData {
 
 //const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
 
-function getHeroSummaryData(targetCode: string): HeroSummaryData {
+function getHeroSummaryData(targetCode: string, isLastYear: boolean = false): HeroSummaryData {
+  if (isLastYear) {
+    // Last year data for HYP008: 62.52% total (54.4% complete + 8.12% exception = ~62.52%)
+    // Breaking it down: ~54% complete, ~8.5% exception invited, ~37.5% incomplete
+    const lastYearData: Record<string, HeroSummaryData> = {
+      HYP008: {
+        complete: 51.0, // Slightly lower than current
+        incomplete: 37.5,
+        exceptionInvited: 11.5,
+        exceptionClinical: 0,
+      },
+      HYP009: {
+        complete: 64.0, // Slightly lower than current
+        incomplete: 31.0,
+        exceptionInvited: 5.0,
+        exceptionClinical: 0,
+      },
+    };
+    return lastYearData[targetCode] ?? { complete: 0, incomplete: 0, exceptionInvited: 0, exceptionClinical: 0 };
+  }
+  
   const summaryData: Record<string, HeroSummaryData> = {
     HYP008: {
       complete: 54.4,
@@ -49,8 +71,8 @@ function calculateQOFPoints(
   return 1 + ((achievement - minThreshold) / (maxThreshold - minThreshold)) * (maxPoints - 1);
 }
 
-export function HeroSection({ condition }: HeroSectionProps) {
-  const { forecast: baseForecast } = useForecastData(condition);
+export function HeroSection({ condition, viewMode = 'forecast', onViewModeChange }: HeroSectionProps) {
+  const { forecast: baseForecast } = useForecastData(condition, viewMode);
   const [isCompressed, setIsCompressed] = useState(false);
   const [manuallyExpanded, setManuallyExpanded] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -115,8 +137,8 @@ export function HeroSection({ condition }: HeroSectionProps) {
 
   const forecast = useMemo(() => {
     if (condition === 'hypertension') {
-      const hyp008Data = getHeroSummaryData('HYP008');
-      const hyp009Data = getHeroSummaryData('HYP009');
+      const hyp008Data = getHeroSummaryData('HYP008', viewMode === 'lastYear');
+      const hyp009Data = getHeroSummaryData('HYP009', viewMode === 'lastYear');
 
       const hyp008WorkDone = hyp008Data.complete + hyp008Data.exceptionInvited;
       const hyp009WorkDone = hyp009Data.complete + hyp009Data.exceptionInvited;
@@ -128,12 +150,12 @@ export function HeroSection({ condition }: HeroSectionProps) {
       };
     }
     return baseForecast;
-  }, [condition, baseForecast]);
+  }, [condition, baseForecast, viewMode]);
 
   const { pointsAchieved, maxPoints } = useMemo(() => {
     if (condition === 'hypertension') {
-      const hyp008Data = getHeroSummaryData('HYP008');
-      const hyp009Data = getHeroSummaryData('HYP009');
+      const hyp008Data = getHeroSummaryData('HYP008', viewMode === 'lastYear');
+      const hyp009Data = getHeroSummaryData('HYP009', viewMode === 'lastYear');
 
       const hyp008Achievement =
         hyp008Data.complete + hyp008Data.exceptionClinical + hyp008Data.exceptionInvited;
@@ -152,7 +174,7 @@ export function HeroSection({ condition }: HeroSectionProps) {
       pointsAchieved: Math.round((forecast.withPlanner / 100) * 564),
       maxPoints: 564,
     };
-  }, [condition, forecast.withPlanner]);
+  }, [condition, forecast.withPlanner, viewMode]);
 
   const expectedWorkDonePercentage = useMemo(() => {
     const yearProgress = getFinancialYearProgress();
@@ -201,6 +223,43 @@ export function HeroSection({ condition }: HeroSectionProps) {
   const prevalenceOpportunityAmount = useMemo(() => {
     return Math.round((prevalenceOpportunityPercentage / 100) * maxEarned);
   }, [prevalenceOpportunityPercentage, maxEarned]);
+
+  // Calculate costs based on viewMode
+  const costData = useMemo(() => {
+    if (viewMode === 'lastYear') {
+      // Last year: Show what they actually spent vs what they could have saved
+      // Traditional cost: Based on last year's lower completion rates, they likely spent more
+      // Estimate: If current year forecast shows £70k traditional, last year might have been higher due to lower efficiency
+      const lastYearTraditionalCost = 75000; // Estimated: higher due to less efficient completion
+      const lastYearSuveraCost = 65000; // What Suvera would have cost last year
+      const lastYearActualSavings = lastYearTraditionalCost - lastYearSuveraCost;
+      
+      return {
+        traditionalCost: lastYearTraditionalCost,
+        suveraCost: lastYearSuveraCost,
+        savings: lastYearActualSavings,
+        showSavings: true,
+        finalCost: undefined,
+        prevalenceReduction: undefined,
+      } as const;
+    } else {
+      // Forecast mode: Show potential savings
+      const traditionalCost = 70000;
+      const suveraCost = 72000;
+      const prevalenceReduction = 10000;
+      const finalCost = suveraCost - prevalenceReduction;
+      const savings = traditionalCost - finalCost;
+      
+      return {
+        traditionalCost,
+        suveraCost,
+        prevalenceReduction,
+        finalCost,
+        savings,
+        showSavings: false,
+      } as const;
+    }
+  }, [viewMode]);
 
   return (
     <div 
@@ -356,8 +415,31 @@ export function HeroSection({ condition }: HeroSectionProps) {
       <div className="card-glass p-6 lg:col-span-2 relative">
         <div className="flex items-start justify-between mb-1">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 leading-tight">
-              Your forecast for this QOF year
+            {/* Toggle/Tab Control */}
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={() => onViewModeChange?.('forecast')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'forecast'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                This Year's Forecast
+              </button>
+              <button
+                onClick={() => onViewModeChange?.('lastYear')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'lastYear'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Last Year's Performance
+              </button>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-3">
+              {viewMode === 'lastYear' ? "Last Year's Performance" : "Your forecast for this QOF year"}
             </h3>
           </div>
           {/* Minimize Button - only show if user has scrolled */}
@@ -375,7 +457,9 @@ export function HeroSection({ condition }: HeroSectionProps) {
           )}
         </div>
         <p className="text-sm text-gray-600 leading-normal mb-6">
-          Showing potential QOF achievement, based on recalling method.
+          {viewMode === 'lastYear' 
+            ? 'Showing actual QOF performance from last year.' 
+            : 'Showing potential QOF achievement, based on recalling method.'}
         </p>
 
         {/* Progress Bars Container */}
@@ -518,41 +602,90 @@ export function HeroSection({ condition }: HeroSectionProps) {
       {/* Potential Cost Savings Card */}
       <div className="card-glass p-5">
         {/* Headline */}
-        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">Cost for completing QOF</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">
+          {viewMode === 'lastYear' ? 'Cost Analysis: Last Year' : 'Cost for completing QOF'}
+        </h3>
 
-        {/* First row: Original cost (strikethrough) + Suvera cost button */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="text-3xl font-bold text-gray-500 line-through leading-tight">
-            £70,000
-          </div>
-          
-            <div className="text-3xl font-bold text-green-700 leading-tight">
-              £62,000
+        {viewMode === 'lastYear' ? (
+          <>
+            {/* Last Year Mode: Show actual spend vs potential savings */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="text-3xl font-bold text-red-600 leading-tight">
+                £{costData.traditionalCost.toLocaleString()}
+              </div>
+              <div className="text-lg text-gray-500">→</div>
+              <div className="text-3xl font-bold text-green-700 leading-tight">
+                £{costData.suveraCost.toLocaleString()}
+              </div>
             </div>
-        </div>
 
-        {/* Smaller section: Breakdown */}
-        <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
-          {/* Suvera cost alone */}
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-700 leading-normal">Suvera clinic cost</span>
-            <span className="font-semibold text-gray-900 leading-normal">
-              £72,000
-            </span>
-          </div>
-          {/* Additional reduction from undiagnosed patients */}
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-700 leading-normal">Additional reduction (d.u. prevalence)</span>
-            <span className="font-semibold text-green-600 leading-normal">
-              -£10,000
-            </span>
-          </div>
-        </div>
+            {/* Breakdown */}
+            <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Traditional cost (actual spend)</span>
+                <span className="font-semibold text-gray-900 leading-normal">
+                  £{costData.traditionalCost.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Suvera cost (could have spent)</span>
+                <span className="font-semibold text-green-600 leading-normal">
+                  £{costData.suveraCost.toLocaleString()}
+                </span>
+              </div>
+            </div>
 
-        {/* CTA Button */}
-        <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
-          Save £8,000 today!
-        </button>
+            {/* Savings Display */}
+            <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="text-xs text-gray-600 mb-1">Could have saved</div>
+              <div className="text-2xl font-bold text-green-700">
+                £{costData.savings.toLocaleString()}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
+              See how to save this year
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Forecast Mode: Show potential savings */}
+            {costData.finalCost !== undefined && costData.prevalenceReduction !== undefined && (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="text-3xl font-bold text-gray-500 line-through leading-tight">
+                    £{costData.traditionalCost.toLocaleString()}
+                  </div>
+                  <div className="text-3xl font-bold text-green-700 leading-tight">
+                    £{costData.finalCost.toLocaleString()}
+                  </div>
+                </div>
+
+                {/* Breakdown */}
+                <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 leading-normal">Suvera clinic cost</span>
+                    <span className="font-semibold text-gray-900 leading-normal">
+                      £{costData.suveraCost.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 leading-normal">Additional reduction (d.u. prevalence)</span>
+                    <span className="font-semibold text-green-600 leading-normal">
+                      -£{costData.prevalenceReduction.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
+                  Save £{costData.savings.toLocaleString()} today!
+                </button>
+              </>
+            )}
+          </>
+        )}
       </div>
           </div>
         </div>

@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 import { Eye, AlertTriangle } from 'lucide-react';
-import { getSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
+import { getSummaryData, getLastYearSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
+import { type ViewMode } from '../hooks/useForecastData';
 
 interface IndicatorsTargetCardsProps {
   condition: string;
   targetCode: string;
+  viewMode?: ViewMode;
 }
 
 // Hardcoded data for HYP008 November comparison
@@ -53,8 +55,12 @@ function getNotYetInvitedChangeClass(change: number): string {
   return 'text-gray-600';
 }
 
-export function IndicatorsTargetCards({ condition: _condition, targetCode }: IndicatorsTargetCardsProps) {
-  const summaryData = useMemo(() => getSummaryData(targetCode), [targetCode]);
+export function IndicatorsTargetCards({ condition: _condition, targetCode, viewMode = 'forecast' }: IndicatorsTargetCardsProps) {
+  const summaryData = useMemo(() => {
+    return viewMode === 'lastYear' 
+      ? getLastYearSummaryData(targetCode)
+      : getSummaryData(targetCode);
+  }, [targetCode, viewMode]);
   const yearProgress = useMemo(() => getFinancialYearProgress(), []);
 
   // Helper calculations

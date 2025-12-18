@@ -4,6 +4,7 @@ import { HeroSection } from '../components/HeroSection';
 import { IndicatorsMergedSummary } from '../components/IndicatorsMergedSummary';
 import { IndicatorsContent } from '../components/IndicatorsContent';
 import { HospitalIcon, Check, X, Plus } from 'lucide-react';
+import { type ViewMode } from '../hooks/useForecastData';
 import {
   clinicalDomainConditions, 
   publicHealthConditions, // Used in commented-out Public Health Domain section
@@ -60,6 +61,7 @@ export function Dashboard() {
   const allConditions = useMemo(() => [...clinicalDomainConditions], []);
   // const allConditions = useMemo(() => [...clinicalDomainConditions, ...publicHealthConditions], []); // Original with Public Health
   const [expandedConditions, setExpandedConditions] = useState<ConditionKey[]>(allConditions);
+  const [viewMode, setViewMode] = useState<ViewMode>('forecast');
   const formattedDate = useMemo(() => formatDate(), []);
 
   const toggleCondition = (condition: ConditionKey) => {
@@ -123,7 +125,11 @@ export function Dashboard() {
           </div>
 
           {/* Hero Section */}
-          <HeroSection condition={firstExpandedCondition} />
+          <HeroSection 
+            condition={firstExpandedCondition} 
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+          />
 
           {/* Clinical Domain Filters */}
           <div className="mb-6">
@@ -180,11 +186,11 @@ export function Dashboard() {
           {expandedConditions.length > 0 && (
             <div className="mt-8">
               {hasConditionsWithTargetDetails ? (
-                <IndicatorsMergedSummary conditions={expandedConditions} />
+                <IndicatorsMergedSummary conditions={expandedConditions} viewMode={viewMode} />
               ) : (
                 <div className="space-y-8">
                   {expandedConditions.map((condition) => (
-                    <IndicatorsContent key={condition} condition={condition} />
+                    <IndicatorsContent key={condition} condition={condition} viewMode={viewMode} />
                   ))}
                 </div>
               )}

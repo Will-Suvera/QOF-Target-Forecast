@@ -1,10 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Eye, ChevronRight } from 'lucide-react';
-import { getSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
+import { getSummaryData, getLastYearSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
 import { IndicatorsTargetCards } from './IndicatorsTargetCards';
+import { type ViewMode } from '../hooks/useForecastData';
 
 interface IndicatorsHypertensionSummaryProps {
   condition: string;
+  viewMode?: ViewMode;
 }
 
 interface TargetDetail {
@@ -169,7 +171,7 @@ const conditionDataMap: Record<string, ConditionData> = {
   },
 };
 
-export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertensionSummaryProps) {
+export function IndicatorsHypertensionSummary({ condition, viewMode = 'forecast' }: IndicatorsHypertensionSummaryProps) {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
   const conditionData = useMemo(() => {
@@ -275,7 +277,9 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
       {/* Stacked Bar Chart */}
       <div className="space-y-6">
         {conditionData.targetDetails.map((target) => {
-          const summaryData = getSummaryData(target.code);
+          const summaryData = viewMode === 'lastYear'
+            ? getLastYearSummaryData(target.code)
+            : getSummaryData(target.code);
           const expectedAchievement = getExpectedAchievementForTarget(target);
 
           return (
@@ -392,7 +396,7 @@ export function IndicatorsHypertensionSummary({ condition }: IndicatorsHypertens
               {expandedSections[target.code] === true && (
                 <div className="mt-6 -mx-6 -mb-6">
                   <div className="bg-white/50 border-t border-glass">
-                    <IndicatorsTargetCards condition={condition} targetCode={target.code} />
+                    <IndicatorsTargetCards condition={condition} targetCode={target.code} viewMode={viewMode} />
                   </div>
                 </div>
               )}

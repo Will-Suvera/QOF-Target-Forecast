@@ -99,6 +99,58 @@ export function getSummaryData(targetCode: string): SummaryData {
   };
 }
 
+// Last year summary data - based on historical performance
+// For HYP008: 62.52% total completion (51% complete + 11.5% exception), 37.5% incomplete
+// For HYP009: ~71.8% total completion (64% complete + 7.8% exception), ~28.2% incomplete
+const lastYearSpecialCases: Record<string, Omit<SummaryData, 'completePatients' | 'incompletePatients' | 'exceptionInvitedPatients' | 'exceptionClinicalPatients'>> = {
+  HYP008: {
+    complete: 51.0,
+    incomplete: 37.5,
+    exceptionInvited: 11.5,
+    exceptionClinical: 0,
+    totalRegister: 683, // Same as current
+  },
+  HYP009: {
+    complete: 64.0,
+    incomplete: 28.2,
+    exceptionInvited: 7.8,
+    exceptionClinical: 0,
+    totalRegister: 234, // Same as current
+  },
+};
+
+export function getLastYearSummaryData(targetCode: string): SummaryData {
+  const lastYearCase = lastYearSpecialCases[targetCode];
+  if (lastYearCase) {
+    return {
+      ...lastYearCase,
+      completePatients: Math.round((lastYearCase.complete / 100) * lastYearCase.totalRegister),
+      incompletePatients: Math.round((lastYearCase.incomplete / 100) * lastYearCase.totalRegister),
+      exceptionInvitedPatients: Math.round(
+        (lastYearCase.exceptionInvited / 100) * lastYearCase.totalRegister
+      ),
+      exceptionClinicalPatients: 0,
+    };
+  }
+
+  // For other targets, estimate last year as ~3-4% lower than current
+  const currentData = getSummaryData(targetCode);
+  const estimatedTotalCompletion = Math.max(0, (currentData.complete + currentData.exceptionInvited) * 0.96);
+  const breakdown = calculateBreakdown(estimatedTotalCompletion);
+
+  return {
+    complete: breakdown.complete,
+    incomplete: breakdown.incomplete,
+    exceptionInvited: breakdown.exceptionInvited,
+    exceptionClinical: 0,
+    totalRegister: currentData.totalRegister,
+    completePatients: Math.round((breakdown.complete / 100) * currentData.totalRegister),
+    incompletePatients: Math.round((breakdown.incomplete / 100) * currentData.totalRegister),
+    exceptionInvitedPatients: Math.round((breakdown.exceptionInvited / 100) * currentData.totalRegister),
+    exceptionClinicalPatients: 0,
+  };
+}
+
 interface UseIndicatorsDataReturn {
   expandedSections: Record<string, boolean>;
   toggleAccordion: (section: string) => void;
