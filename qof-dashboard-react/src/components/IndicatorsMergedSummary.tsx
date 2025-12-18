@@ -1,11 +1,13 @@
 import { useMemo, useEffect } from 'react';
 import { Eye, ChevronRight } from 'lucide-react';
-import { useIndicatorsData, getSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
+import { useIndicatorsData, getSummaryData, getLastYearSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
 import { conditionTargetMap, type TargetDetail } from '../data/targetMappings';
 import { IndicatorsTargetCards } from './IndicatorsTargetCards';
+import { type ViewMode } from '../hooks/useForecastData';
 
 interface IndicatorsMergedSummaryProps {
   conditions: string[];
+  viewMode?: ViewMode;
 }
 
 const PERCENTAGE_MARKERS = [0, 20, 40, 60, 80, 100];
@@ -29,7 +31,7 @@ function ThresholdMarker({ position, color }: { position: number; color: string 
   );
 }
 
-export function IndicatorsMergedSummary({ conditions }: IndicatorsMergedSummaryProps) {
+export function IndicatorsMergedSummary({ conditions, viewMode = 'forecast' }: IndicatorsMergedSummaryProps) {
   const { expandedSections, toggleAccordion, initializeAccordionSections } = useIndicatorsData();
   const yearProgress = useMemo(() => getFinancialYearProgress(), []);
 
@@ -139,7 +141,9 @@ export function IndicatorsMergedSummary({ conditions }: IndicatorsMergedSummaryP
             {/* Target Bars */}
             <div className="space-y-6">
               {conditionInfo.targetDetails.map((target) => {
-                const summary = getSummaryData(target.code);
+                const summary = viewMode === 'lastYear' 
+                  ? getLastYearSummaryData(target.code)
+                  : getSummaryData(target.code);
                 const isExpanded = expandedSections[target.code] ?? false;
                 const expectedAchievement = getExpectedAchievementForTarget(target);
 
@@ -246,6 +250,7 @@ export function IndicatorsMergedSummary({ conditions }: IndicatorsMergedSummaryP
                           <IndicatorsTargetCards
                             condition={conditionInfo.condition}
                             targetCode={target.code}
+                            viewMode={viewMode}
                           />
                         </div>
                       </div>

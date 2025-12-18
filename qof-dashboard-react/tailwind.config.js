@@ -66,15 +66,6 @@ export default {
           'white-lighter': 'rgba(255, 255, 255, 0.9)',
         },
       },
-      // Golden Ratio Typography Scale (Base: 14px / 0.875rem, φ = 1.618)
-      fontSize: {
-        'xs': ['0.54rem', { lineHeight: '1.382', letterSpacing: '0.01em' }],     // 8.65px
-        'sm': ['0.875rem', { lineHeight: '1.618', letterSpacing: '0' }],         // 14px - BASE
-        'base': ['1.416rem', { lineHeight: '1.618', letterSpacing: '0' }],       // 22.65px
-        'lg': ['2.29rem', { lineHeight: '1.236', letterSpacing: '-0.01em' }],    // 36.65px
-        'xl': ['3.71rem', { lineHeight: '1.236', letterSpacing: '-0.02em' }],    // 59.3px
-        '2xl': ['6rem', { lineHeight: '1.236', letterSpacing: '-0.03em' }],      // 96px
-      },
       // Line heights using golden ratio
       lineHeight: {
         'tight': '1.236',      // 1/φ²
