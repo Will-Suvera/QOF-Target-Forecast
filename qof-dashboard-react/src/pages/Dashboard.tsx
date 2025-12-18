@@ -4,16 +4,17 @@ import { HeroSection } from '../components/HeroSection';
 import { IndicatorsMergedSummary } from '../components/IndicatorsMergedSummary';
 import { HospitalIcon, Check, X, Plus } from 'lucide-react';
 import { usePracticeData } from '../context/PracticeDataContext';
-import { type TargetAreas } from '../extracts/dataService';
+import { type TargetAreas, calculateAreaTotals } from '../extracts/dataService';
 
 interface ConditionCardProps {
   areaKey: TargetAreas;
   title: string;
+  workDonePercent: number;
   isExpanded: boolean;
   onToggle: () => void;
 }
 
-function ConditionCard({ title, isExpanded, onToggle }: ConditionCardProps) {
+function ConditionCard({ title, workDonePercent, isExpanded, onToggle }: ConditionCardProps) {
   return (
     <button
       onClick={onToggle}
@@ -29,7 +30,7 @@ function ConditionCard({ title, isExpanded, onToggle }: ConditionCardProps) {
         <Plus className="w-4 h-4 flex-shrink-0 text-gray-400" strokeWidth={2.5} />
       )}
       <span className={`text-sm font-medium ${isExpanded ? 'text-brand-dark' : 'text-gray-700'}`}>
-        {title}
+        {title}  {Math.round(workDonePercent)}%
       </span>
     </button>
   );
@@ -142,11 +143,13 @@ export function Dashboard() {
             <div className="flex flex-wrap gap-2">
               {availableAreas.map((area) => {
                 const areaData = getAreaData(area);
+                const workDone = areaData ? calculateAreaTotals(areaData).avgWorkDone : 0;
                 return (
                   <ConditionCard
                     key={area}
                     areaKey={area}
                     title={areaData?.areaName ?? area}
+                    workDonePercent={workDone}
                     isExpanded={isAreaExpanded(area)}
                     onToggle={() => { toggleArea(area); }}
                   />

@@ -56,6 +56,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
   const costData = useMemo(() => {
     let traditionalCost = 0;
     let suveraCost = 0;
+    let prevalenceOpportunity = 0;
 
     for (const areaKey of areasToShow) {
       const areaData = getAreaData(areaKey);
@@ -63,6 +64,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
         const costs = calculateAreaCosts(areaData);
         traditionalCost += costs.traditionalCost;
         suveraCost += costs.suveraCost;
+        prevalenceOpportunity += areaData.earningsByIncreasingPrevalence;
       }
     }
 
@@ -70,6 +72,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
       traditionalCost,
       suveraCost,
       savings: traditionalCost - suveraCost,
+      prevalenceOpportunity,
     };
   }, [areasToShow, getAreaData]);
 
@@ -114,23 +117,18 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
   }, [workDonePercentage, expectedWorkDonePercentage]);
 
   const pointsPercentage = maxPoints > 0 ? (pointsAchieved / maxPoints) * 100 : 0;
-  const earnedPercentage = maxEarned > 0 ? (earnedSoFar / maxEarned) * 100 : 0;
 
-  // Calculate the three sections for earned so far bar
-  const remainingToEarnPercentage = useMemo(() => {
-    return Math.max(0, 100 - earnedPercentage - 5);
-  }, [earnedPercentage]);
+  // Use actual amounts from data
+  const prevalenceOpportunityAmount = costData.prevalenceOpportunity;
+  const remainingToEarnAmount = maxEarned - earnedSoFar;
 
-  const prevalenceOpportunityPercentage = 5;
+  // Total potential including prevalence opportunity for bar representation
+  const totalPotentialWithPrevalence = maxEarned + prevalenceOpportunityAmount;
 
-  // Calculate amounts for legend
-  const remainingToEarnAmount = useMemo(() => {
-    return Math.round((remainingToEarnPercentage / 100) * maxEarned);
-  }, [remainingToEarnPercentage, maxEarned]);
-
-  const prevalenceOpportunityAmount = useMemo(() => {
-    return Math.round((prevalenceOpportunityPercentage / 100) * maxEarned);
-  }, [maxEarned]);
+  // Calculate percentages based on total potential
+  const earnedPercentage = totalPotentialWithPrevalence > 0 ? (earnedSoFar / totalPotentialWithPrevalence) * 100 : 0;
+  const remainingToEarnPercentage = totalPotentialWithPrevalence > 0 ? (remainingToEarnAmount / totalPotentialWithPrevalence) * 100 : 0;
+  const prevalenceOpportunityPercentage = totalPotentialWithPrevalence > 0 ? (prevalenceOpportunityAmount / totalPotentialWithPrevalence) * 100 : 0;
 
   // Build description text
   const areaDescription = useMemo(() => {
@@ -255,17 +253,17 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-2 bg-green-700 rounded-sm flex-shrink-0"></div>
-                        <span>£{earnedSoFar.toLocaleString()} earned so far</span>
+                        <span>£{earnedSoFar.toLocaleString()} earned</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-2 bg-green-100 rounded-sm flex-shrink-0"></div>
-                        <span>£{remainingToEarnAmount.toLocaleString()} to earn from diagnosed patients</span>
+                        <span>£{remainingToEarnAmount.toLocaleString()} missed QOF earnings</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-2 rounded-sm flex-shrink-0" style={{
                           background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 1px, #16a34a 1px, #16a34a 2px)'
                         }}></div>
-                        <span>£{prevalenceOpportunityAmount.toLocaleString()} from undiagnosed patients</span>
+                        <span>£{prevalenceOpportunityAmount.toLocaleString()} by increasing prevalence</span>
                       </div>
                     </div>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
@@ -286,6 +284,20 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
 
       {/* Main Hero Section - always visible */}
       <div ref={heroRef} className="mb-8">
+        {/* View Mode Toggle - no-op buttons for now */}
+        <div className="flex gap-2 mb-4">
+          <button
+            className="px-4 py-2 text-sm font-medium rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            This Year's Forecast
+          </button>
+          <button
+            className="px-4 py-2 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          >
+            Last Year's Performance
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* QOF Forecast Card */}
           <div className="card-glass p-6 lg:col-span-2 relative">
@@ -377,7 +389,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                 </div>
 
 
-                {/* Earned So Far - Partitioned into 3 sections */}
+                {/* Earned - Partitioned into 3 sections */}
                 <div>
                   <div className="flex items-baseline mb-2 justify-between">
                     <div className="flex items-baseline gap-2">
@@ -385,9 +397,9 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                       <span className="text-base font-semibold text-green-700 leading-tight">
                         £{earnedSoFar.toLocaleString()}
                       </span>
-                      <span className="text-sm font-medium text-green-700 leading-normal">earned so far</span>
+                      <span className="text-sm font-medium text-green-700 leading-normal">earned</span>
                     </div>
-                    <span className="text-sm font-medium text-green-700 leading-normal">out of £{maxEarned.toLocaleString()}</span>
+                    <span className="text-sm font-medium text-green-700 leading-normal">out of £{totalPotentialWithPrevalence.toLocaleString()}</span>
                   </div>
                   <div className="w-full rounded-md h-6 relative overflow-visible flex">
                     {/* Section 1: Earned so far (solid green) */}
@@ -417,7 +429,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                       <span className="text-gray-700 text-base font-medium leading-tight">
                         £{remainingToEarnAmount.toLocaleString()}
                       </span>
-                      <span className="text-gray-700 text-sm leading-normal">to earn from diagnosed patients</span>
+                      <span className="text-gray-700 text-sm leading-normal">missed QOF earnings</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div
@@ -429,7 +441,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                       <span className="text-gray-700 text-base font-medium leading-tight">
                         £{prevalenceOpportunityAmount.toLocaleString()}
                       </span>
-                      <span className="text-gray-700 text-sm leading-normal">from undiagnosed patients</span>
+                      <span className="text-gray-700 text-sm leading-normal">by increasing prevalence</span>
                     </div>
                   </div>
                 </div>
@@ -437,49 +449,64 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Potential Cost Savings Card */}
+          {/* Cost Analysis Card */}
           <div className="card-glass p-5">
             {/* Headline */}
             <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">
-              Cost for completing QOF
+              Cost Analysis: Last Year
             </h3>
 
-            <div className="flex items-center gap-3 mb-4">
-              <div className="text-3xl font-bold text-gray-500 line-through leading-tight">
+            {/* Large headline amounts */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="text-3xl font-bold text-red-600 leading-tight">
                 £{costData.traditionalCost.toLocaleString()}
               </div>
-              <div className="text-3xl font-bold text-green-700 leading-tight">
-                £{costData.suveraCost.toLocaleString()}
+              <span className="text-gray-400 text-xl">→</span>
+              <div className="text-3xl font-bold text-green-600 leading-tight">
+                £{(costData.suveraCost - prevalenceOpportunityAmount - remainingToEarnAmount).toLocaleString()}
               </div>
             </div>
 
             {/* Breakdown */}
             <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-700 leading-normal">Traditional cost</span>
+                <span className="text-gray-700 leading-normal">Traditional cost (estimated)</span>
                 <span className="font-semibold text-gray-900 leading-normal">
                   £{costData.traditionalCost.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-700 leading-normal">Suvera cost</span>
+                <span className="leading-normal">
+                  <span className="font-semibold text-gray-900">£{costData.suveraCost.toLocaleString()}</span>
+                  <span className="font-semibold text-green-600"> (-£{costData.savings.toLocaleString()})</span>
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Increased earnings (prevalence)</span>
                 <span className="font-semibold text-green-600 leading-normal">
-                  £{costData.suveraCost.toLocaleString()}
+                  -£{prevalenceOpportunityAmount.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Increased earnings (missed QOF)</span>
+                <span className="font-semibold text-green-600 leading-normal">
+                  -£{remainingToEarnAmount.toLocaleString()}
                 </span>
               </div>
             </div>
 
             {/* Savings Display */}
             <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-xs text-gray-600 mb-1">Potential savings</div>
-              <div className="text-2xl font-bold text-green-700">
-                £{costData.savings.toLocaleString()}
+              <div className="text-xs text-gray-600 mb-1">How much you could have saved</div>
+              <div className="text-2xl font-bold text-green-600">
+                £{(costData.savings + prevalenceOpportunityAmount + remainingToEarnAmount).toLocaleString()}
               </div>
             </div>
 
             {/* CTA Button */}
             <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
-              Save £{costData.savings.toLocaleString()} today!
+              See how to save this year
             </button>
           </div>
         </div>

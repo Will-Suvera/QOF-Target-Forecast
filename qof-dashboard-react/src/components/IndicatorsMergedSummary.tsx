@@ -98,34 +98,68 @@ export function IndicatorsMergedSummary({ expandedAreas }: IndicatorsMergedSumma
                   {areaData.areaName}
                 </h4>
 
-                {/* Prevalence Card */}
-                <div className="mt-3 mb-4">
-                  <div className="bg-gray-50 rounded-md px-3 py-2 border border-gray-200 inline-block">
-                    <div className="text-xs text-gray-600 mb-1">
-                      {areaData.areaName} Register Prevalence
-                    </div>
-                    <div className="flex items-baseline gap-3">
+                {/* Prevalence Section */}
+                <h5 className="text-sm font-semibold text-gray-700 mt-4 mb-2">Prevalence</h5>
+                <div className="mb-4">
+                  <div className="bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-xs text-gray-500">Current:</span>
-                        <span className="text-sm font-bold text-gray-900 ml-1">
-                          {(areaData.prevalence * 100).toFixed(2)}%
-                        </span>
+                        <div className="text-xs text-gray-500">Practice</div>
+                        <div className="text-sm font-bold text-gray-900">{(areaData.prevalence * 100).toFixed(2)}%</div>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Sub ICB:</span>
-                        <span className="text-sm font-bold text-gray-900 ml-1">
-                          {(areaData.subIcbTopQuartilePrevalence * 100).toFixed(2)}%
-                        </span>
-                        <span className={`text-xs ml-1 ${areaData.prevalence < areaData.subIcbTopQuartilePrevalence ? 'text-red-600' : 'text-green-600'}`}>
-                          ({((areaData.prevalence - areaData.subIcbTopQuartilePrevalence) * 100).toFixed(2)}%)
-                        </span>
+                        <div className="text-xs text-gray-500">National Average</div>
+                        <div className="text-sm font-bold text-gray-900">{(areaData.nationalAveragePrevalence * 100).toFixed(2)}%</div>
+                      </div>
+                      <div className="border-l border-gray-300 pl-4">
+                        <div className="text-xs text-gray-500">Sub ICB Top Quartile</div>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-sm font-bold text-gray-900">{(areaData.subIcbTopQuartilePrevalence * 100).toFixed(2)}%</span>
+                          <span className={`text-xs font-medium ${areaData.subIcbTopQuartilePrevalence > areaData.prevalence ? 'text-red-600' : 'text-green-600'}`}>
+                            {areaData.prevalence > 0 ? Math.abs(((areaData.subIcbTopQuartilePrevalence - areaData.prevalence) / areaData.prevalence) * 100).toFixed(0) : 0}% {areaData.subIcbTopQuartilePrevalence > areaData.prevalence ? 'higher' : 'lower'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="pl-4">
+                        <div className="text-xs text-gray-500">Missed income from low prevalence</div>
+                        <div className="text-sm font-bold text-green-600">£{areaData.earningsByIncreasingPrevalence.toLocaleString()}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resource Planning Section */}
+                <h5 className="text-sm font-semibold text-gray-700 mt-4 mb-2">Resource Planning</h5>
+                <div className="mb-4">
+                  <div className="bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs text-gray-500">Patients on register</div>
+                        <div className="text-sm font-bold text-gray-900">{areaData.listSize.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Avg appts per patient</div>
+                        <div className="text-sm font-bold text-gray-900">{areaData.avgAppointmentsPerPatient}</div>
+                      </div>
+                      <div className="border-l border-gray-300 pl-4">
+                        <div className="text-xs text-gray-500">Traditional cost</div>
+                        <div className="text-sm font-bold text-gray-900">£{(areaData.listSize * areaData.traditionalCostPerPatient).toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Suvera cost</div>
+                        <div className="text-sm font-bold text-gray-900">£{(areaData.listSize * areaData.suveraCostPerPatient).toLocaleString()}</div>
+                      </div>
+                      <div className="pl-4">
+                        <div className="text-xs text-gray-500">Potential savings</div>
+                        <div className="text-sm font-bold text-green-600">£{(areaData.listSize * (areaData.traditionalCostPerPatient - areaData.suveraCostPerPatient)).toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Target Bars */}
+              {/* Targets Section */}
+              <h5 className="text-sm font-semibold text-gray-700 mb-2">Targets</h5>
               <div className="space-y-6">
                 {targets.map(({ code, data: targetData }) => {
                   const summaryData = calculateSummaryData(targetData);
@@ -247,7 +281,7 @@ export function IndicatorsMergedSummary({ expandedAreas }: IndicatorsMergedSumma
                       {isExpanded && (
                         <div className="mt-6 -mx-6 -mb-6">
                           <div className="bg-white/50 border-t border-glass">
-                            <IndicatorsTargetCards targetCode={code} targetData={targetData} />
+                            <IndicatorsTargetCards targetCode={code} targetData={targetData} earningsPerPoint={areaData.earningsPerPoint} />
                           </div>
                         </div>
                       )}
