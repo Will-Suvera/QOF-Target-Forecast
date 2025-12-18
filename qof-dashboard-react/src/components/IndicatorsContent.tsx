@@ -1,24 +1,22 @@
-import { conditionTargetMap } from '../data/targetMappings';
-import { IndicatorsHypertensionSummary } from './IndicatorsHypertensionSummary';
-import { type ViewMode } from '../hooks/useForecastData';
+import { type TargetAreas } from '../extracts/dataService';
+import { usePracticeData } from '../context/PracticeDataContext';
+import { TargetAreaSummary } from './TargetAreaSummary';
 
 interface IndicatorsContentProps {
-  condition: string;
-  viewMode?: ViewMode;
+  areaKey: TargetAreas;
 }
 
-export function IndicatorsContent({ condition, viewMode = 'forecast' }: IndicatorsContentProps) {
-  const conditionData = conditionTargetMap[condition];
+export function IndicatorsContent({ areaKey }: IndicatorsContentProps) {
+  const { getAreaData } = usePracticeData();
+  const areaData = getAreaData(areaKey);
 
-  // If condition has targetDetails, show the HypertensionSummary (stacked bar chart view)
-  if (conditionData?.targetDetails && conditionData.targetDetails.length > 0) {
-    return <IndicatorsHypertensionSummary condition={condition} viewMode={viewMode} />;
+  if (!areaData) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <p className="text-gray-600">No data available for this condition.</p>
+      </div>
+    );
   }
 
-  // Otherwise show IndicatorsTargetCards
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <p className="text-gray-600">No target details available for this condition.</p>
-    </div>
-  );
+  return <TargetAreaSummary areaKey={areaKey} />;
 }

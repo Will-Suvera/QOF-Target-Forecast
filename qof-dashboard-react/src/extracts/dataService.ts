@@ -32,18 +32,18 @@ export type TargetData = {
   traditionalCostForIncompletePatients: number;
 }
 
-type HistoricData = {
-  [key in TargetAreas]: {
-    areaName: string;
-    earningsPerPoint: number;
-    listSize: number;
-    prevalence: number;
-    subIcbTopQuartilePrevalence: number;
-    earningsByIncreasingPrevalence: number;
-    targets: {
-      [key: string]: TargetData;
-    }
-  }
+export type AreaData = {
+  areaName: string;
+  earningsPerPoint: number;
+  listSize: number;
+  prevalence: number;
+  subIcbTopQuartilePrevalence: number;
+  earningsByIncreasingPrevalence: number;
+  targets: Record<string, TargetData>;
+};
+
+export type HistoricData = {
+  [key in TargetAreas]: AreaData;
 }
 
 export const getDataForPractice = (ods: string): {
@@ -145,5 +145,79 @@ export const getDataForPractice = (ods: string): {
       },
     },
     current: null,
+  };
+}
+
+// Helper Functions
+
+/**
+ * Calculate summary breakdown from TargetData
+ * Returns percentages and patient counts for UI display
+ */
+export function calculateSummaryData(target: TargetData) {
+  const completePatients = Math.round(target.completionCount);
+  const exceptionPatients = Math.round(target.exceptionReportingCount);
+  const incompletePatients = target.denominator - completePatients - exceptionPatients;
+
+  return {
+    complete: target.completionPercentage * 100,
+    incomplete: (incompletePatients / target.denominator) * 100,
+    exceptionInvited: target.exceptionReportingPercentage * 100,
+    exceptionClinical: 0, // Not tracked separately in current data
+    totalRegister: target.denominator,
+    completePatients,
+    incompletePatients,
+    exceptionInvitedPatients: exceptionPatients,
+    exceptionClinicalPatients: 0,
+  };
+}
+
+/**
+ * Calculate QOF points from achievement vs thresholds
+ */
+export function calculateQOFPoints(target: TargetData): number {
+  const achievement = target.completionPercentage + target.exceptionReportingPercentage;
+  if (achievement < target.minThreshold) return 0;
+  if (achievement >= target.maxThreshold) return target.maxPoints;
+
+  const range = target.maxThreshold - target.minThreshold;
+  const progress = (achievement - target.minThreshold) / range;
+  return 1 + progress * (target.maxPoints - 1);
+}
+
+/**
+ * Calculate total points and earnings for an area
+ */
+export function calculateAreaTotals(areaData: AreaData) {
+  const targets = Object.values(areaData.targets);
+  const totalMaxPoints = targets.reduce((sum, t) => sum + t.maxPoints, 0);
+  const totalCurrentPoints = targets.reduce((sum, t) => sum + calculateQOFPoints(t), 0);
+  const totalEarned = Math.round(totalCurrentPoints * areaData.earningsPerPoint);
+  const totalPotential = totalMaxPoints * areaData.earningsPerPoint;
+
+  // Calculate average work done (completion + exceptions)
+  const avgWorkDone = targets.reduce((sum, t) => {
+    return sum + (t.completionPercentage + t.exceptionReportingPercentage);
+  }, 0) / targets.length * 100;
+
+  return {
+    totalMaxPoints,
+    totalCurrentPoints: Math.round(totalCurrentPoints * 10) / 10,
+    totalEarned,
+    totalPotential,
+    avgWorkDone: Math.round(avgWorkDone * 10) / 10,
+  };
+}
+
+/**
+ * Calculate costs for an area
+ */
+export function calculateAreaCosts(areaData: AreaData) {
+  const targets = Object.values(areaData.targets);
+  return {
+    suveraCost: targets.reduce((sum, t) => sum + t.suveraCostForIncompletePatients, 0),
+    traditionalCost: targets.reduce((sum, t) => sum + t.traditionalCostForIncompletePatients, 0),
+    suveraFullCost: targets.reduce((sum, t) => sum + t.suveraCostForFullList, 0),
+    traditionalFullCost: targets.reduce((sum, t) => sum + t.traditionalCostForFullList, 0),
   };
 }

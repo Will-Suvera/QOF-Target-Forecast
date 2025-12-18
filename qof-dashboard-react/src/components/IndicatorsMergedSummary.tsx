@@ -1,65 +1,45 @@
-import { useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Eye, ChevronRight } from 'lucide-react';
-import { useIndicatorsData, getSummaryData, getLastYearSummaryData, getFinancialYearProgress } from '../hooks/useIndicatorsData';
-import { conditionTargetMap, type TargetDetail } from '../data/targetMappings';
+import { usePracticeData } from '../context/PracticeDataContext';
+import { type TargetAreas, calculateSummaryData } from '../extracts/dataService';
+import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
 import { IndicatorsTargetCards } from './IndicatorsTargetCards';
-import { type ViewMode } from '../hooks/useForecastData';
 
 interface IndicatorsMergedSummaryProps {
-  conditions: string[];
-  viewMode?: ViewMode;
+  expandedAreas: TargetAreas[];
 }
 
-const PERCENTAGE_MARKERS = [0, 20, 40, 60, 80, 100];
-
-function ThresholdMarker({ position, color }: { position: number; color: string }) {
-  return (
-    <div
-      className="absolute top-0 bottom-0 pointer-events-none z-10"
-      style={{ left: `${String(position)}%`, width: 0 }}
-    >
-      <div
-        className={`absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-${color}-500`}
-      />
-      <div
-        className={`absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-${color}-500 rotate-45`}
-      />
-      <div
-        className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-${color}-500 rotate-45`}
-      />
-    </div>
-  );
-}
-
-export function IndicatorsMergedSummary({ conditions, viewMode = 'forecast' }: IndicatorsMergedSummaryProps) {
-  const { expandedSections, toggleAccordion, initializeAccordionSections } = useIndicatorsData();
+export function IndicatorsMergedSummary({ expandedAreas }: IndicatorsMergedSummaryProps) {
+  const { getAreaData, getAllTargetsForArea } = usePracticeData();
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const yearProgress = useMemo(() => getFinancialYearProgress(), []);
 
-  const conditionsWithTargets = useMemo(() => {
-    return conditions
-      .map((condition) => {
-        const data = conditionTargetMap[condition];
-        if (data?.targetDetails && data.targetDetails.length > 0) {
-          return { condition, ...data };
-        }
-        return null;
-      })
-      .filter((item): item is NonNullable<typeof item> => item !== null);
-  }, [conditions]);
-
+  // Initialize accordion state for all targets
   useEffect(() => {
-    for (const conditionInfo of conditionsWithTargets) {
-      if (conditionInfo.targetDetails) {
-        const targetCodes = conditionInfo.targetDetails.map((t) => t.code);
-        initializeAccordionSections(targetCodes);
+    const initialState: Record<string, boolean> = {};
+    for (const area of expandedAreas) {
+      const targets = getAllTargetsForArea(area);
+      for (const { code } of targets) {
+        if (!(code in expandedSections)) {
+          initialState[code] = false;
+        }
       }
     }
-  }, [conditionsWithTargets, initializeAccordionSections]);
+    if (Object.keys(initialState).length > 0) {
+      setExpandedSections((prev) => ({ ...prev, ...initialState }));
+    }
+  }, [expandedAreas, getAllTargetsForArea, expandedSections]);
 
-  const getExpectedAchievementForTarget = (target: TargetDetail): number => {
-    const maxThreshold = target.maxThreshold;
-    return yearProgress * maxThreshold;
+  const toggleAccordion = (code: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [code]: !prev[code],
+    }));
   };
+
+  if (expandedAreas.length === 0) {
+    return null;
+  }
 
   return (
     <div className="card-glass p-6 mb-6">
@@ -72,11 +52,11 @@ export function IndicatorsMergedSummary({ conditions, viewMode = 'forecast' }: I
         </button>
       </div>
 
-      {/* Legend */}
+      {/* Shared Legend */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <div className="flex items-center">
           <div className="w-4 h-4 bg-green-600 rounded mr-2" />
-          <span className="text-sm text-gray-700 leading-normal">Clinically complete</span>
+          <span className="text-sm text-gray-700">Clinically complete</span>
         </div>
         <div className="flex items-center">
           <div className="w-4 h-4 bg-gray-300 rounded mr-2" />
@@ -100,167 +80,184 @@ export function IndicatorsMergedSummary({ conditions, viewMode = 'forecast' }: I
         </div>
       </div>
 
-      {/* Conditions with their target bars */}
+      {/* All Areas and their targets */}
       <div className="space-y-8">
-        {conditionsWithTargets.map((conditionInfo) => (
-          <div key={conditionInfo.condition}>
-            {/* Condition Title */}
-            <div className="mb-4">
-              <h4 className="text-base font-semibold text-gray-900 leading-tight">
-                {conditionInfo.title} targets
-              </h4>
+        {expandedAreas.map((areaKey) => {
+          const areaData = getAreaData(areaKey);
+          const targets = getAllTargetsForArea(areaKey);
 
-              {/* Prevalence Card for Hypertension */}
-              {conditionInfo.showPrevalence && (
+          if (!areaData || targets.length === 0) {
+            return null;
+          }
+
+          return (
+            <div key={areaKey}>
+              {/* Area Title */}
+              <div className="mb-4">
+                <h4 className="text-base font-semibold text-gray-900 leading-tight">
+                  {areaData.areaName}
+                </h4>
+
+                {/* Prevalence Card */}
                 <div className="mt-3 mb-4">
                   <div className="bg-gray-50 rounded-md px-3 py-2 border border-gray-200 inline-block">
                     <div className="text-xs text-gray-600 mb-1">
-                      {conditionInfo.title} Register Prevalence
+                      {areaData.areaName} Register Prevalence
                     </div>
                     <div className="flex items-baseline gap-3">
                       <div>
                         <span className="text-xs text-gray-500">Current:</span>
-                        <span className="text-sm font-bold text-gray-900 ml-1">10.33%</span>
+                        <span className="text-sm font-bold text-gray-900 ml-1">
+                          {(areaData.prevalence * 100).toFixed(2)}%
+                        </span>
                       </div>
                       <div>
                         <span className="text-xs text-gray-500">Sub ICB:</span>
-                        <span className="text-sm font-bold text-gray-900 ml-1">14.17%</span>
-                        <span className="text-xs text-red-600 ml-1">(-3.84%)</span>
-                      </div>
-                      <div>
-                        <span className="text-xs text-gray-500">National:</span>
-                        <span className="text-sm font-bold text-gray-900 ml-1">14.8%</span>
-                        <span className="text-xs text-red-600 ml-1">(-4.47%)</span>
+                        <span className="text-sm font-bold text-gray-900 ml-1">
+                          {(areaData.subIcbTopQuartilePrevalence * 100).toFixed(2)}%
+                        </span>
+                        <span className={`text-xs ml-1 ${areaData.prevalence < areaData.subIcbTopQuartilePrevalence ? 'text-red-600' : 'text-green-600'}`}>
+                          ({((areaData.prevalence - areaData.subIcbTopQuartilePrevalence) * 100).toFixed(2)}%)
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Target Bars */}
-            <div className="space-y-6">
-              {conditionInfo.targetDetails.map((target) => {
-                const summary = viewMode === 'lastYear' 
-                  ? getLastYearSummaryData(target.code)
-                  : getSummaryData(target.code);
-                const isExpanded = expandedSections[target.code] ?? false;
-                const expectedAchievement = getExpectedAchievementForTarget(target);
+              {/* Target Bars */}
+              <div className="space-y-6">
+                {targets.map(({ code, data: targetData }) => {
+                  const summaryData = calculateSummaryData(targetData);
+                  const minThreshold = targetData.minThreshold * 100;
+                  const maxThreshold = targetData.maxThreshold * 100;
+                  const expectedAchievement = yearProgress * maxThreshold;
+                  const isExpanded = expandedSections[code] ?? false;
 
-                return (
-                  <div key={target.code}>
-                    <div className="flex items-center mb-2">
-                      <button
-                        onClick={() => { toggleAccordion(target.code); }}
-                        className="flex items-center text-sm font-medium text-gray-900 w-24 hover:text-blue-600 transition-colors"
-                      >
-                        <ChevronRight
-                          className={`w-4 h-4 mr-1 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                        />
-                        {target.code}
-                      </button>
-
-                      <div
-                        className="flex-1 relative bg-gray-100 rounded overflow-visible cursor-pointer"
-                        style={{ paddingBottom: '30px' }}
-                        onClick={() => { toggleAccordion(target.code); }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            toggleAccordion(target.code);
-                          }
-                        }}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        {/* Bar container */}
-                        <div className="relative h-8">
-                          {/* Complete */}
-                          <div
-                            className="absolute left-0 top-0 h-full bg-green-600 flex items-center justify-center"
-                            style={{ width: `${String(summary.complete)}%` }}
-                          >
-                            <span className="text-xs font-semibold text-white">
-                              {summary.complete}% ({summary.completePatients})
-                            </span>
-                          </div>
-
-                          {/* Exception reported - invited */}
-                          <div
-                            className="absolute h-full bg-gray-300 flex items-center justify-center"
-                            style={{
-                              left: `${String(summary.complete)}%`,
-                              width: `${String(summary.exceptionInvited)}%`,
-                            }}
-                          >
-                            <span className="text-xs font-semibold text-gray-700">
-                              {summary.exceptionInvited}% ({summary.exceptionInvitedPatients})
-                            </span>
-                          </div>
-
-                          {/* Incomplete */}
-                          <div
-                            className="absolute right-0 top-0 h-full bg-blue-600 flex items-center justify-center"
-                            style={{ width: `${String(summary.incomplete)}%` }}
-                          >
-                            <span className="text-xs font-semibold text-white">
-                              {summary.incomplete}% ({summary.incompletePatients})
-                            </span>
-                          </div>
-
-                          {/* Min Achievement Threshold - Red */}
-                          <ThresholdMarker position={target.minThreshold} color="red" />
-
-                          {/* Max Achievement Threshold - Green */}
-                          <ThresholdMarker position={target.maxThreshold} color="green" />
-
-                          {/* Expected by Today - Purple */}
-                          <ThresholdMarker position={expectedAchievement} color="purple" />
-                        </div>
-
-                        {/* X-axis */}
-                        <div
-                          className="absolute bottom-0 left-0 right-0"
-                          style={{ height: '30px' }}
+                  return (
+                    <div key={code}>
+                      <div className="flex items-center mb-2">
+                        <button
+                          onClick={() => { toggleAccordion(code); }}
+                          className="flex items-center text-sm font-medium text-gray-900 w-24 hover:text-blue-600 transition-colors"
                         >
-                          <div className="relative w-full h-full">
-                            {PERCENTAGE_MARKERS.map((percent) => (
-                              <div
-                                key={percent}
-                                className="absolute flex flex-col items-center"
-                                style={{
-                                  left: `${String(percent)}%`,
-                                  transform: 'translateX(-50%)',
-                                }}
-                              >
-                                <div className="w-0.5 h-2 bg-gray-400 mb-1" />
-                                <span className="text-xs text-gray-600 font-medium">
-                                  {percent}%
-                                </span>
-                              </div>
-                            ))}
+                          <ChevronRight
+                            className={`w-4 h-4 mr-1 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                          />
+                          {code}
+                        </button>
+
+                        <div
+                          className="flex-1 relative bg-gray-100 rounded overflow-visible cursor-pointer"
+                          style={{ paddingBottom: '30px' }}
+                          onClick={() => { toggleAccordion(code); }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              toggleAccordion(code);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {/* Bar container */}
+                          <div className="relative h-8">
+                            {/* Complete */}
+                            <div
+                              className="absolute left-0 top-0 h-full bg-green-600 flex items-center justify-center"
+                              style={{ width: `${summaryData.complete}%` }}
+                            >
+                              <span className="text-xs font-semibold text-white">
+                                {Math.round(summaryData.complete * 10) / 10}% ({summaryData.completePatients})
+                              </span>
+                            </div>
+
+                            {/* Exception reported - invited */}
+                            <div
+                              className="absolute h-full bg-gray-300 flex items-center justify-center"
+                              style={{
+                                left: `${summaryData.complete}%`,
+                                width: `${summaryData.exceptionInvited}%`,
+                              }}
+                            >
+                              <span className="text-xs font-semibold text-gray-700">
+                                {Math.round(summaryData.exceptionInvited * 10) / 10}% ({summaryData.exceptionInvitedPatients})
+                              </span>
+                            </div>
+
+                            {/* Incomplete */}
+                            <div
+                              className="absolute right-0 top-0 h-full bg-blue-600 flex items-center justify-center"
+                              style={{ width: `${summaryData.incomplete}%` }}
+                            >
+                              <span className="text-xs font-semibold text-white">
+                                {Math.round(summaryData.incomplete * 10) / 10}% ({summaryData.incompletePatients})
+                              </span>
+                            </div>
+
+                            {/* Min Achievement Threshold - Red */}
+                            <div
+                              className="absolute top-0 bottom-0 pointer-events-none z-10"
+                              style={{ left: `${minThreshold}%`, width: 0 }}
+                            >
+                              <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-red-500" />
+                              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-red-500 rotate-45" />
+                              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-red-500 rotate-45" />
+                            </div>
+
+                            {/* Max Achievement Threshold - Green */}
+                            <div
+                              className="absolute top-0 bottom-0 pointer-events-none z-10"
+                              style={{ left: `${maxThreshold}%`, width: 0 }}
+                            >
+                              <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-green-500" />
+                              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-green-500 rotate-45" />
+                              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-green-500 rotate-45" />
+                            </div>
+
+                            {/* Expected by Today - Purple */}
+                            <div
+                              className="absolute top-0 bottom-0 pointer-events-none z-10"
+                              style={{ left: `${expectedAchievement}%`, width: 0 }}
+                            >
+                              <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 border-l-2 border-dashed border-purple-500" />
+                              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-purple-500 rotate-45" />
+                              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-purple-500 rotate-45" />
+                            </div>
+                          </div>
+
+                          {/* X-axis */}
+                          <div className="absolute bottom-0 left-0 right-0" style={{ height: '30px' }}>
+                            <div className="relative w-full h-full">
+                              {[0, 20, 40, 60, 80, 100].map((percent) => (
+                                <div
+                                  key={percent}
+                                  className="absolute flex flex-col items-center"
+                                  style={{ left: `${percent}%`, transform: 'translateX(-50%)' }}
+                                >
+                                  <div className="w-0.5 h-2 bg-gray-400 mb-1" />
+                                  <span className="text-xs text-gray-600 font-medium">{percent}%</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Expanded Target Content */}
-                    {isExpanded && (
-                      <div className="mt-6 -mx-6 -mb-6">
-                        <div className="bg-white border-t border-gray-200">
-                          <IndicatorsTargetCards
-                            condition={conditionInfo.condition}
-                            targetCode={target.code}
-                            viewMode={viewMode}
-                          />
+                      {/* Expanded Target Content */}
+                      {isExpanded && (
+                        <div className="mt-6 -mx-6 -mb-6">
+                          <div className="bg-white/50 border-t border-glass">
+                            <IndicatorsTargetCards targetCode={code} targetData={targetData} />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
