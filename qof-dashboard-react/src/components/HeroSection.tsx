@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import { Expand } from 'lucide-react';
+import { ArrowUpToLine, Lock  } from 'lucide-react';
 import { usePracticeData } from '../context/PracticeDataContext';
 import { type TargetAreas, calculateAreaTotals, calculateAreaCosts } from '../extracts/dataService';
 import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
@@ -11,6 +11,8 @@ interface HeroSectionProps {
 export function HeroSection({ selectedAreas }: HeroSectionProps) {
   const { getAreaData, getTargetAreas } = usePracticeData();
   const [showFloatingBar, setShowFloatingBar] = useState(false);
+  const [showLegendInFloatingBar, setShowLegendInFloatingBar] = useState(false);
+  const [viewMode, setViewMode] = useState<'current' | 'last'>('last');
   const heroRef = useRef<HTMLDivElement>(null);
 
   // If no areas selected, show data for ALL areas
@@ -88,6 +90,15 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
             // Show floating bar when hero top is above viewport (scrolled past)
             setShowFloatingBar(rect.top < -100);
           }
+          
+          // Check if summary legend is scrolled past
+          const summaryLegend = document.getElementById('summary-legend');
+          if (summaryLegend) {
+            const legendRect = summaryLegend.getBoundingClientRect();
+            // Show legend in floating bar when legend is scrolled past
+            setShowLegendInFloatingBar(legendRect.bottom < 0);
+          }
+          
           ticking = false;
         });
         ticking = true;
@@ -162,7 +173,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                 aria-label="Scroll to top"
               >
-                <Expand className="w-4 h-4 text-gray-500" />
+                <ArrowUpToLine className="w-4 h-4 text-gray-500" />
               </button>
 
               {/* Progress Bars */}
@@ -273,37 +284,76 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
 
               {/* CTA Button */}
               <div className="flex-shrink-0">
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
+                <button className="bg-action text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-action-hover transition-colors whitespace-nowrap">
                   Save £{costData.savings.toLocaleString()} today!
                 </button>
               </div>
             </div>
+            {/* Legend - only show after scrolling past summary legend */}
+            {showLegendInFloatingBar && (
+              <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-green-600 rounded mr-2" />
+                <span className="text-xs text-gray-700">Clinically complete</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-gray-300 rounded mr-2" />
+                <span className="text-xs text-gray-700">Exception reported - invited</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-action rounded mr-2" />
+                <span className="text-xs text-gray-700">Incomplete</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 border-l-2 border-dashed border-red-500 mr-2" />
+                <span className="text-xs text-gray-700">Min achievement</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 border-l-2 border-dashed border-purple-500 mr-2" />
+                <span className="text-xs text-gray-700">Expected by today</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 border-l-2 border-dashed border-green-500 mr-2" />
+                <span className="text-xs text-gray-700">Max achievement</span>
+              </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* Main Hero Section - always visible */}
       <div ref={heroRef} className="mb-8">
-        {/* View Mode Toggle - no-op buttons for now */}
-        <div className="flex gap-2 mb-4">
-          <button
-            className="px-4 py-2 text-sm font-medium rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            This Year's Forecast
-          </button>
-          <button
-            className="px-4 py-2 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-          >
-            Last Year's Performance
-          </button>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* QOF Forecast Card */}
           <div className="card-glass p-6 lg:col-span-2 relative">
+            {/* View Mode Segmented Control */}
+            <div className="inline-flex bg-[rgba(172,187,212,0.15)] rounded-lg p-1 mb-4">
+              <button
+                onClick={() => setViewMode('current')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${
+                  viewMode === 'current'
+                    ? 'bg-glass border border-gray-200 text-black shadow-sm'
+                    : 'text-gray-700 hover:text-gray-900 border border-transparent'
+                }`}
+              >
+                <Lock className="w-4 h-4" />
+                <span>This Year's Forecast</span>
+              </button>
+              <button
+                onClick={() => setViewMode('last')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  viewMode === 'last'
+                    ? 'bg-glass border border-gray-200 text-black shadow-sm'
+                    : 'text-gray-700 hover:text-gray-900 border border-transparent'
+                }`}
+              >
+                Last Year's Performance
+              </button>
+            </div>
             <div className="flex items-start justify-between mb-1">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 leading-tight mt-2">
                   Your forecast for this QOF year
                 </h3>
               </div>
@@ -315,14 +365,14 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
             {/* Progress Bars Container */}
             <div className="relative" style={{ minHeight: '160px' }}>
               {/* Progress Bars */}
-              <div className="space-y-6 relative z-0">
+              <div className="space-y-4 relative z-0">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Points achieved */}
                   <div>
                     <div className="flex items-baseline mb-2 justify-between">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-base font-semibold text-blue-800 leading-tight">
+                        <span className="text-lg font-semibold text-blue-800 leading-tight">
                           {pointsAchieved}
                         </span>
                         <span className="text-sm font-medium text-blue-800 leading-normal">points</span>
@@ -340,7 +390,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                   {/* Work Done */}
                   <div>
                     <div className="flex items-baseline mb-2 gap-2">
-                      <span className={`text-base font-medium ${workDoneColors.text} leading-tight`}>{workDonePercentage}%</span>
+                      <span className={`text-lg font-semibold ${workDoneColors.text} leading-tight`}>{workDonePercentage}%</span>
                       <span className={`text-sm font-medium ${workDoneColors.text} leading-normal`}>work done so far</span>
                     </div>
                     <div className="relative">
@@ -394,7 +444,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
                   <div className="flex items-baseline mb-2 justify-between">
                     <div className="flex items-baseline gap-2">
 
-                      <span className="text-base font-semibold text-green-700 leading-tight">
+                      <span className="text-lg font-semibold text-green-700 leading-tight">
                         £{earnedSoFar.toLocaleString()}
                       </span>
                       <span className="text-sm font-medium text-green-700 leading-normal">earned</span>
@@ -457,7 +507,7 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
             </h3>
 
             {/* Large headline amounts */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center justify-between mb-4">
               <div className="text-3xl font-bold text-red-600 leading-tight">
                 £{costData.traditionalCost.toLocaleString()}
               </div>
@@ -498,14 +548,14 @@ export function HeroSection({ selectedAreas }: HeroSectionProps) {
 
             {/* Savings Display */}
             <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-xs text-gray-600 mb-1">How much you could have saved</div>
-              <div className="text-2xl font-bold text-green-600">
-                £{(costData.savings + prevalenceOpportunityAmount + remainingToEarnAmount).toLocaleString()}
+              <div className="text-green-600 flex justify-between">
+                <span className="text-sm font-medium">You could have saved</span>
+                <span className="font-semibold">£{(costData.savings + prevalenceOpportunityAmount + remainingToEarnAmount).toLocaleString()}</span>
               </div>
             </div>
 
             {/* CTA Button */}
-            <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
+            <button className="w-full bg-action text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-action-hover transition-colors">
               See how to save this year
             </button>
           </div>
