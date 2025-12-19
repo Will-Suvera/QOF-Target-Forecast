@@ -43,7 +43,7 @@ export function IndicatorsTargetCards({ targetCode, targetData, earningsPerPoint
   const nationalExceptionPercent = Math.round(targetData.nationalAverageExceptionPercentage * 100 * 10) / 10;
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       {/* Target Header */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-2">QOF_{targetCode}</h3>
@@ -141,7 +141,7 @@ export function IndicatorsTargetCards({ targetCode, targetData, earningsPerPoint
               </div>
               <div className="w-full bg-gray-200 rounded-full h-5">
                 <div
-                  className="bg-blue-600 h-5 rounded-full"
+                  className="bg-action h-5 rounded-full"
                   style={{ width: `${Math.min(targetData.completionPercentage * 100, 100)}%` }}
                 />
               </div>
@@ -193,7 +193,7 @@ export function IndicatorsTargetCards({ targetCode, targetData, earningsPerPoint
               </div>
               <div className="w-full bg-gray-200 rounded-full h-5">
                 <div
-                  className="bg-blue-600 h-5 rounded-full"
+                  className="bg-action h-5 rounded-full"
                   style={{ width: `${Math.min(clinicalCompletionPercent, 100)}%` }}
                 />
               </div>

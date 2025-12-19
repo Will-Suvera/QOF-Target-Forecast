@@ -65,6 +65,10 @@ export default {
           'white-dark': 'rgba(255, 255, 255, 0.5)',
           'white-lighter': 'rgba(255, 255, 255, 0.9)',
         },
+        action: {
+          DEFAULT: '#0E3D89',
+          hover: '#0A2F6B',
+        },
       },
       // Line heights using golden ratio
       lineHeight: {

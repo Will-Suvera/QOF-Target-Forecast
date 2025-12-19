@@ -44,7 +44,7 @@ export function TargetAreaSummary({ areaKey }: TargetAreaSummaryProps) {
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-900 leading-tight">{areaData.areaName}</h3>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center">
+        <button className="bg-action text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-action-hover flex items-center">
           <Eye className="w-4 h-4 mr-2" />
           View in Planner
         </button>
@@ -124,7 +124,7 @@ export function TargetAreaSummary({ areaKey }: TargetAreaSummaryProps) {
           <span className="text-sm text-gray-700">Exception reported - invited</span>
         </div>
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-blue-600 rounded mr-2" />
+          <div className="w-4 h-4 bg-action rounded mr-2" />
           <span className="text-sm text-gray-700">Incomplete</span>
         </div>
 
@@ -204,7 +204,7 @@ export function TargetAreaSummary({ areaKey }: TargetAreaSummaryProps) {
                     </div>
                     {/* Incomplete */}
                     <div
-                      className="absolute right-0 top-0 h-full bg-blue-600 flex items-center justify-center"
+                      className="absolute right-0 top-0 h-full bg-action flex items-center justify-center"
                       style={{ width: `${summaryData.incomplete}%` }}
                     >
                       <span className="text-xs font-semibold text-white">
