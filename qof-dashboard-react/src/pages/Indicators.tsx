@@ -4,6 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
 import { IndicatorsContent } from '../components/IndicatorsContent';
+import { usePracticeData } from '../context/PracticeDataContext';
+import { type TargetAreas } from '../extracts/dataService';
 
 function formatDate(): string {
   const now = new Date();
@@ -18,8 +20,14 @@ function formatDate(): string {
 
 export function Indicators() {
   const [searchParams] = useSearchParams();
-  const condition = searchParams.get('condition');
+  const condition = searchParams.get('condition') as TargetAreas | null;
   const formattedDate = useMemo(() => formatDate(), []);
+  const { meta, getTargetAreas } = usePracticeData();
+
+  // Validate that condition is a valid target area
+  const validAreas = getTargetAreas();
+  const isValidArea = condition && validAreas.includes(condition);
+  const areaKey = isValidArea ? condition : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,29 +47,29 @@ export function Indicators() {
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">Practice:</span>
-                  <span className="text-gray-900">Maltings Surgery (E82031)</span>
+                  <span className="text-gray-900">{meta.practiceName} ({meta.ods})</span>
                 </div>
                 <div className="h-4 w-px bg-gray-300"></div>
                 <div className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">ICB:</span>
-                  <span className="text-gray-900">NHS Hertfordshire and West Essex ICB (06N)</span>
+                  <span className="text-gray-900">{meta.icbName} ({meta.icbCode})</span>
                 </div>
                 <div className="h-4 w-px bg-gray-300"></div>
                 <div className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">PCN:</span>
-                  <span className="text-gray-900">Abbey Health PCN (U06079)</span>
+                  <span className="text-gray-900">{meta.pcnName} ({meta.pcnCode})</span>
                 </div>
                 <div className="h-4 w-px bg-gray-300"></div>
                 <div className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">Patients:</span>
-                  <span className="font-semibold text-gray-900">19,026</span>
+                  <span className="font-semibold text-gray-900">{meta.listSize.toLocaleString()}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Hero Section */}
-          <HeroSection condition={condition} />
+          <HeroSection selectedAreas={areaKey ? [areaKey] : []} />
 
           {/* Back to Dashboard Link */}
           <div className="mb-6">
@@ -77,12 +85,14 @@ export function Indicators() {
           </div>
 
           {/* Indicators Content */}
-          {condition ? (
-            <IndicatorsContent condition={condition} />
+          {areaKey ? (
+            <IndicatorsContent areaKey={areaKey} />
           ) : (
             <div className="card-glass p-6">
               <p className="text-gray-600">
-                No condition selected. Please select a condition from the dashboard.
+                {condition
+                  ? `"${condition}" is not a valid condition. Please select a condition from the dashboard.`
+                  : 'No condition selected. Please select a condition from the dashboard.'}
               </p>
             </div>
           )}

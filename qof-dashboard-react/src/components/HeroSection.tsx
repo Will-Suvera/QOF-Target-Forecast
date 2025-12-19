@@ -1,180 +1,103 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import { Expand, Minimize } from 'lucide-react';
-import { useForecastData, type ViewMode } from '../hooks/useForecastData';
+import { Expand } from 'lucide-react';
+import { usePracticeData } from '../context/PracticeDataContext';
+import { type TargetAreas, calculateAreaTotals, calculateAreaCosts } from '../extracts/dataService';
 import { getFinancialYearProgress } from '../hooks/useIndicatorsData';
 
 interface HeroSectionProps {
-  condition?: string | null | undefined;
-  viewMode?: ViewMode;
-  onViewModeChange?: (mode: ViewMode) => void;
+  selectedAreas: TargetAreas[];
 }
 
-interface HeroSummaryData {
-  complete: number;
-  incomplete: number;
-  exceptionInvited: number;
-  exceptionClinical: number;
-}
-
-//const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-
-function getHeroSummaryData(targetCode: string, isLastYear: boolean = false): HeroSummaryData {
-  if (isLastYear) {
-    // Last year data for HYP008: 62.52% total (54.4% complete + 8.12% exception = ~62.52%)
-    // Breaking it down: ~54% complete, ~8.5% exception invited, ~37.5% incomplete
-    const lastYearData: Record<string, HeroSummaryData> = {
-      HYP008: {
-        complete: 51.0, // Slightly lower than current
-        incomplete: 37.5,
-        exceptionInvited: 11.5,
-        exceptionClinical: 0,
-      },
-      HYP009: {
-        complete: 64.0, // Slightly lower than current
-        incomplete: 31.0,
-        exceptionInvited: 5.0,
-        exceptionClinical: 0,
-      },
-    };
-    return lastYearData[targetCode] ?? { complete: 0, incomplete: 0, exceptionInvited: 0, exceptionClinical: 0 };
-  }
-  
-  const summaryData: Record<string, HeroSummaryData> = {
-    HYP008: {
-      complete: 54.4,
-      incomplete: 32.7,
-      exceptionInvited: 12.9,
-      exceptionClinical: 0,
-    },
-    HYP009: {
-      complete: 67,
-      incomplete: 28.2,
-      exceptionInvited: 4.8,
-      exceptionClinical: 0,
-    },
-  };
-  return summaryData[targetCode] ?? { complete: 0, incomplete: 0, exceptionInvited: 0, exceptionClinical: 0 };
-}
-
-function calculateQOFPoints(
-  achievement: number,
-  minThreshold: number,
-  maxThreshold: number,
-  maxPoints: number
-): number {
-  if (achievement < minThreshold) {
-    return 0;
-  }
-  if (achievement >= maxThreshold) {
-    return maxPoints;
-  }
-  return 1 + ((achievement - minThreshold) / (maxThreshold - minThreshold)) * (maxPoints - 1);
-}
-
-export function HeroSection({ condition, viewMode = 'forecast', onViewModeChange }: HeroSectionProps) {
-  const { forecast: baseForecast } = useForecastData(condition, viewMode);
-  const [isCompressed, setIsCompressed] = useState(false);
-  const [manuallyExpanded, setManuallyExpanded] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+export function HeroSection({ selectedAreas }: HeroSectionProps) {
+  const { getAreaData, getTargetAreas } = usePracticeData();
+  const [showFloatingBar, setShowFloatingBar] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Scroll detection logic
+  // If no areas selected, show data for ALL areas
+  const areasToShow = useMemo(() => {
+    if (selectedAreas.length === 0) {
+      return getTargetAreas();
+    }
+    return selectedAreas;
+  }, [selectedAreas, getTargetAreas]);
+
+  // Aggregate totals across all selected areas
+  const { pointsAchieved, maxPoints, workDonePercentage, earnedSoFar, maxEarned } = useMemo(() => {
+    let totalCurrentPoints = 0;
+    let totalMaxPoints = 0;
+    let totalEarned = 0;
+    let totalPotential = 0;
+    let totalWorkDone = 0;
+    let areaCount = 0;
+
+    for (const areaKey of areasToShow) {
+      const areaData = getAreaData(areaKey);
+      if (areaData) {
+        const totals = calculateAreaTotals(areaData);
+        totalCurrentPoints += totals.totalCurrentPoints;
+        totalMaxPoints += totals.totalMaxPoints;
+        totalEarned += totals.totalEarned;
+        totalPotential += totals.totalPotential;
+        totalWorkDone += totals.avgWorkDone;
+        areaCount++;
+      }
+    }
+
+    return {
+      pointsAchieved: Math.round(totalCurrentPoints * 10) / 10,
+      maxPoints: totalMaxPoints,
+      workDonePercentage: areaCount > 0 ? Math.round((totalWorkDone / areaCount) * 10) / 10 : 0,
+      earnedSoFar: totalEarned,
+      maxEarned: totalPotential,
+    };
+  }, [areasToShow, getAreaData]);
+
+  // Aggregate costs across all selected areas
+  const costData = useMemo(() => {
+    let traditionalCost = 0;
+    let suveraCost = 0;
+    let prevalenceOpportunity = 0;
+
+    for (const areaKey of areasToShow) {
+      const areaData = getAreaData(areaKey);
+      if (areaData) {
+        const costs = calculateAreaCosts(areaData);
+        traditionalCost += costs.traditionalCost;
+        suveraCost += costs.suveraCost;
+        prevalenceOpportunity += areaData.earningsByIncreasingPrevalence;
+      }
+    }
+
+    return {
+      traditionalCost,
+      suveraCost,
+      savings: traditionalCost - suveraCost,
+      prevalenceOpportunity,
+    };
+  }, [areasToShow, getAreaData]);
+
+  // Scroll detection - show floating bar when hero is out of view
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          
-          // Reset everything if user scrolls back to top
-          if (currentScrollY < 50) {
-            setHasScrolled(false);
-            setManuallyExpanded(false);
-            setIsCompressed(false);
-            ticking = false;
-            return;
-          }
-          
-          // User has scrolled down
-          const scrolled = currentScrollY > 50;
-          setHasScrolled(scrolled);
-          
-          if (scrolled && heroRef.current) {
+          if (heroRef.current) {
             const rect = heroRef.current.getBoundingClientRect();
-            const heroHeight = rect.height;
-            const heroTop = rect.top;
-            const stickyTopPosition = 16; // top-4 = 16px (1rem)
-            
-            // Check if hero is at or past the sticky position
-            const isAtStickyPosition = heroTop <= stickyTopPosition;
-            
-            if (manuallyExpanded) {
-              // User manually expanded it, keep it expanded
-              setIsCompressed(false);
-            } else if (isAtStickyPosition) {
-              // Hero is now sticky. Check if we should compress based on scroll distance.
-              // Compress when user has scrolled enough that most of hero height has passed
-              const shouldCompress = currentScrollY > (heroHeight * 0.7);
-              setIsCompressed(shouldCompress);
-            } else {
-              // Hero is not at sticky position yet (user near top), keep expanded
-              setIsCompressed(false);
-            }
+            // Show floating bar when hero top is above viewport (scrolled past)
+            setShowFloatingBar(rect.top < -100);
           }
-          
           ticking = false;
         });
-        
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Check initial scroll position
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [manuallyExpanded]);
-
-  const forecast = useMemo(() => {
-    if (condition === 'hypertension') {
-      const hyp008Data = getHeroSummaryData('HYP008', viewMode === 'lastYear');
-      const hyp009Data = getHeroSummaryData('HYP009', viewMode === 'lastYear');
-
-      const hyp008WorkDone = hyp008Data.complete + hyp008Data.exceptionInvited;
-      const hyp009WorkDone = hyp009Data.complete + hyp009Data.exceptionInvited;
-      const averageWorkDone = (hyp008WorkDone + hyp009WorkDone) / 2;
-
-      return {
-        ...baseForecast,
-        current: Math.round(averageWorkDone * 10) / 10,
-      };
-    }
-    return baseForecast;
-  }, [condition, baseForecast, viewMode]);
-
-  const { pointsAchieved, maxPoints } = useMemo(() => {
-    if (condition === 'hypertension') {
-      const hyp008Data = getHeroSummaryData('HYP008', viewMode === 'lastYear');
-      const hyp009Data = getHeroSummaryData('HYP009', viewMode === 'lastYear');
-
-      const hyp008Achievement =
-        hyp008Data.complete + hyp008Data.exceptionClinical + hyp008Data.exceptionInvited;
-      const hyp009Achievement =
-        hyp009Data.complete + hyp009Data.exceptionClinical + hyp009Data.exceptionInvited;
-
-      const hyp008Points = calculateQOFPoints(hyp008Achievement, 40, 85, 38);
-      const hyp009Points = calculateQOFPoints(hyp009Achievement, 40, 85, 14);
-
-      return {
-        pointsAchieved: Math.round((hyp008Points + hyp009Points) * 10) / 10,
-        maxPoints: 52,
-      };
-    }
-    return {
-      pointsAchieved: Math.round((forecast.withPlanner / 100) * 564),
-      maxPoints: 564,
-    };
-  }, [condition, forecast.withPlanner, viewMode]);
+  }, []);
 
   const expectedWorkDonePercentage = useMemo(() => {
     const yearProgress = getFinancialYearProgress();
@@ -183,7 +106,7 @@ export function HeroSection({ condition, viewMode = 'forecast', onViewModeChange
 
   // Calculate dynamic color based on performance relative to target
   const workDoneColors = useMemo(() => {
-    const ratio = forecast.current / expectedWorkDonePercentage;
+    const ratio = workDonePercentage / expectedWorkDonePercentage;
     if (ratio < 0.9) {
       return { bar: 'bg-red-600', text: 'text-red-600', background: 'bg-red-200' };
     }
@@ -191,455 +114,393 @@ export function HeroSection({ condition, viewMode = 'forecast', onViewModeChange
       return { bar: 'bg-amber-700', text: 'text-amber-700', background: 'bg-amber-200' };
     }
     return { bar: 'bg-green-700', text: 'text-green-700', background: 'bg-green-200' };
-  }, [forecast.current, expectedWorkDonePercentage]);
+  }, [workDonePercentage, expectedWorkDonePercentage]);
 
   const pointsPercentage = maxPoints > 0 ? (pointsAchieved / maxPoints) * 100 : 0;
 
-  // Dummy calculation for earned so far (placeholder)
-  const earnedSoFar = useMemo(() => {
-    // Simple dummy calculation: pointsAchieved * 150
-    return Math.round(pointsAchieved * 150);
-  }, [pointsAchieved]);
+  // Use actual amounts from data
+  const prevalenceOpportunityAmount = costData.prevalenceOpportunity;
+  const remainingToEarnAmount = maxEarned - earnedSoFar;
 
-  const maxEarned = useMemo(() => {
-    // Maximum potential earnings: maxPoints * 150
-    return maxPoints * 150;
-  }, [maxPoints]);
+  // Total potential including prevalence opportunity for bar representation
+  const totalPotentialWithPrevalence = maxEarned + prevalenceOpportunityAmount;
 
-  const earnedPercentage = maxEarned > 0 ? (earnedSoFar / maxEarned) * 100 : 0;
+  // Calculate percentages based on total potential
+  const earnedPercentage = totalPotentialWithPrevalence > 0 ? (earnedSoFar / totalPotentialWithPrevalence) * 100 : 0;
+  const remainingToEarnPercentage = totalPotentialWithPrevalence > 0 ? (remainingToEarnAmount / totalPotentialWithPrevalence) * 100 : 0;
+  const prevalenceOpportunityPercentage = totalPotentialWithPrevalence > 0 ? (prevalenceOpportunityAmount / totalPotentialWithPrevalence) * 100 : 0;
 
-  // Calculate the three sections for earned so far bar
-  const remainingToEarnPercentage = useMemo(() => {
-    return Math.max(0, 100 - earnedPercentage - 5); // 5% for prevalence opportunity
-  }, [earnedPercentage]);
-
-  const prevalenceOpportunityPercentage = 5; // Fixed 5% for now
-
-  // Calculate amounts for legend
-  const remainingToEarnAmount = useMemo(() => {
-    return Math.round((remainingToEarnPercentage / 100) * maxEarned);
-  }, [remainingToEarnPercentage, maxEarned]);
-
-  const prevalenceOpportunityAmount = useMemo(() => {
-    return Math.round((prevalenceOpportunityPercentage / 100) * maxEarned);
-  }, [prevalenceOpportunityPercentage, maxEarned]);
-
-  // Calculate costs based on viewMode
-  const costData = useMemo(() => {
-    if (viewMode === 'lastYear') {
-      // Last year: Show what they actually spent vs what they could have saved
-      // Traditional cost: Based on last year's lower completion rates, they likely spent more
-      // Estimate: If current year forecast shows £70k traditional, last year might have been higher due to lower efficiency
-      const lastYearTraditionalCost = 75000; // Estimated: higher due to less efficient completion
-      const lastYearSuveraCost = 65000; // What Suvera would have cost last year
-      const lastYearActualSavings = lastYearTraditionalCost - lastYearSuveraCost;
-      
-      return {
-        traditionalCost: lastYearTraditionalCost,
-        suveraCost: lastYearSuveraCost,
-        savings: lastYearActualSavings,
-        showSavings: true,
-        finalCost: undefined,
-        prevalenceReduction: undefined,
-      } as const;
-    } else {
-      // Forecast mode: Show potential savings
-      const traditionalCost = 70000;
-      const suveraCost = 72000;
-      const prevalenceReduction = 10000;
-      const finalCost = suveraCost - prevalenceReduction;
-      const savings = traditionalCost - finalCost;
-      
-      return {
-        traditionalCost,
-        suveraCost,
-        prevalenceReduction,
-        finalCost,
-        savings,
-        showSavings: false,
-      } as const;
+  // Build description text
+  const areaDescription = useMemo(() => {
+    if (selectedAreas.length === 0) {
+      return 'all conditions';
     }
-  }, [viewMode]);
+    const areaNames = areasToShow.map((key) => {
+      const data = getAreaData(key);
+      return data?.areaName ?? key;
+    });
+    return areaNames.join(' & ');
+  }, [selectedAreas, areasToShow, getAreaData]);
+
+  // Don't render if no data at all
+  if (areasToShow.length === 0) {
+    return null;
+  }
 
   return (
-    <div 
-      ref={heroRef}
-      className={`z-20 mb-8 ${
-        hasScrolled ? 'sticky top-4' : ''
-      } ${
-        isCompressed ? 'bg-white/95 backdrop-blur-sm shadow-md' : ''
-      }`}
-      style={{
-        marginLeft: isCompressed ? '-1.5rem' : '0',
-        marginRight: isCompressed ? '-1.5rem' : '0',
-        paddingLeft: isCompressed ? '1.5rem' : '0',
-        paddingRight: isCompressed ? '1.5rem' : '0',
-      }}
-    >
-      {isCompressed ? (
-        /* Compressed State */
-        <div className="py-3 px-0 mx-auto">
-          <div className="flex items-center justify-between">
-            {/* Toggle Icon */}
-            <button 
-              onClick={() => {
-                setIsCompressed(false);
-                setManuallyExpanded(true);
-              }}
-              className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-              aria-label="Expand hero section"
-            >
-              <Expand className="w-4 h-4 text-gray-500" />
-            </button>
-            {/* Left: Progress Bars */}
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-              {/* Points */}
-              <div className="group relative flex items-center gap-2">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-base font-semibold text-blue-800">{pointsAchieved}</span>
-                  <span className="text-xs text-blue-700">/ {maxPoints}</span>
-                </div>
-                <div className="w-20 bg-blue-200 rounded-full h-2.5 overflow-hidden cursor-pointer">
-                  <div 
-                    className="h-full bg-blue-800 rounded-full transition-all"
-                    style={{ width: `${pointsPercentage}%` }}
-                  />
-                </div>
-                <span className="text-xs text-gray-600">pts</span>
-                {/* Hover Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
-                  {Math.round(pointsPercentage)}% of maximum points
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                </div>
-              </div>
-
-              {/* Work Done */}
-              <div className="group relative flex items-center gap-2">
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-base font-semibold ${workDoneColors.text}`}>{forecast.current}%</span>
-                </div>
-                <div className="relative">
-                  <div className={`w-20 ${workDoneColors.background} rounded-full h-2.5 overflow-visible cursor-pointer`}>
-                    <div 
-                      className={`h-full ${workDoneColors.bar} rounded-full transition-all`}
-                      style={{ width: `${forecast.current}%` }}
-                    />
-                  </div>
-                  {/* Arrow Indicator for Expected at Time of Year */}
-                  <div
-                    className="absolute z-10 pointer-events-none"
-                    style={{
-                      left: `${expectedWorkDonePercentage}%`,
-                      top: '100%',
-                      marginTop: '2px',
-                      transform: 'translateX(-50%)',
-                    }}
-                  >
-                    <div
-                      className="w-0 h-0"
-                      style={{
-                        borderLeft: '4px solid transparent',
-                        borderRight: '4px solid transparent',
-                        borderBottom: '6px solid #6b7280',
-                      }}
-                    />
-                  </div>
-                </div>
-                <span className="text-xs text-gray-600">done</span>
-                {/* Hover Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
-                  Target for {new Date().toLocaleDateString('en-GB', { month: 'short' })}: {Math.round(expectedWorkDonePercentage * 10) / 10}%
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                </div>
-              </div>
-
-              {/* Earned */}
-              <div className="group relative flex items-center gap-2">
-                <span className="text-base font-semibold text-green-700">£{earnedSoFar.toLocaleString()}</span>
-                <div className="w-20 rounded-full h-2.5 overflow-hidden cursor-pointer flex">
-                  <div 
-                    className="h-full bg-green-700 transition-all"
-                    style={{ width: `${earnedPercentage}%` }}
-                  />
-                  <div 
-                    className="h-full bg-green-100"
-                    style={{ width: `${remainingToEarnPercentage}%` }}
-                  />
-                  <div 
-                    className="h-full"
-                    style={{
-                      width: `${prevalenceOpportunityPercentage}%`,
-                      background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 3px)',
-                    }}
-                  />
-                </div>
-                <span className="text-xs text-gray-600">earned</span>
-                {/* Hover Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 min-w-max">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-2 bg-green-700 rounded-sm flex-shrink-0"></div>
-                      <span>£{earnedSoFar.toLocaleString()} earned so far</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-2 bg-green-100 rounded-sm flex-shrink-0"></div>
-                      <span>£{remainingToEarnAmount.toLocaleString()} to earn from diagnosed patients</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-2 rounded-sm flex-shrink-0" style={{
-                        background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 1px, #16a34a 1px, #16a34a 2px)'
-                      }}></div>
-                      <span>£{prevalenceOpportunityAmount.toLocaleString()} from undiagnosed patients</span>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: CTA Button */}
-            <div className="flex-shrink-0">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
-                Save £8,000 today!
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Expanded State */
-        <div 
-          className={manuallyExpanded && hasScrolled ? "bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg" : ""}
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* QOF Forecast Card */}
-      <div className="card-glass p-6 lg:col-span-2 relative">
-        <div className="flex items-start justify-between mb-1">
-          <div className="flex-1">
-            {/* Toggle/Tab Control */}
-            <div className="flex items-center gap-2 mb-4">
+    <>
+      {/* Floating Bar - shown as fixed overlay when hero is scrolled out of view */}
+      {showFloatingBar && (
+        <div className="fixed top-4 left-0 right-0 z-50 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-white/95 backdrop-blur-sm shadow-md rounded-lg py-3 px-4">
+            <div className="flex items-center justify-between">
+              {/* Toggle Icon */}
               <button
-                onClick={() => onViewModeChange?.('forecast')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  viewMode === 'forecast'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                aria-label="Scroll to top"
               >
-                This Year's Forecast
+                <Expand className="w-4 h-4 text-gray-500" />
               </button>
-              <button
-                onClick={() => onViewModeChange?.('lastYear')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  viewMode === 'lastYear'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Last Year's Performance
-              </button>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-3">
-              {viewMode === 'lastYear' ? "Last Year's Performance" : "Your forecast for this QOF year"}
-            </h3>
-          </div>
-          {/* Minimize Button - only show if user has scrolled */}
-          {hasScrolled && (
-            <button 
-              onClick={() => {
-                setIsCompressed(true);
-                setManuallyExpanded(false);
-              }}
-              className="p-1 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
-              aria-label="Minimize hero section"
-            >
-              image.png<Minimize className="w-4 h-4 text-gray-600" strokeWidth={2.5} />
-            </button>
-          )}
-        </div>
-        <p className="text-sm text-gray-600 leading-normal mb-6">
-          {viewMode === 'lastYear' 
-            ? 'Showing actual QOF performance from last year.' 
-            : 'Showing potential QOF achievement, based on recalling method.'}
-        </p>
 
-        {/* Progress Bars Container */}
-        <div className="relative" style={{ minHeight: '160px' }}>
-          {/* Progress Bars */}
-          <div className="space-y-6 relative z-0">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Points achieved */}
-              <div>
-                <div className="flex items-baseline mb-2 justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-base font-semibold text-blue-800 leading-tight">
-                      {pointsAchieved}
-                    </span>
-                    <span className="text-sm font-medium text-blue-800 leading-normal">points</span>
+              {/* Progress Bars */}
+              <div className="flex items-center gap-4 flex-1 min-w-0 ml-4">
+                {/* Points */}
+                <div className="group relative flex items-center gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-base font-semibold text-blue-800">{pointsAchieved}</span>
+                    <span className="text-xs text-blue-700">/ {maxPoints}</span>
                   </div>
-                  <span className="text-sm font-medium text-blue-800 leading-normal">out of {maxPoints}</span>
-                </div>
-                <div className="w-full bg-blue-200 rounded-md h-3 relative overflow-visible">
-                  <div
-                    className="bg-blue-800 h-3 rounded-md"
-                    style={{ width: `${String(pointsPercentage)}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Work Done */}
-              <div>
-                <div className="flex items-baseline mb-2 gap-2">
-                  <span className={`text-base font-medium ${workDoneColors.text} leading-tight`}>{forecast.current}%</span>
-                  <span className={`text-sm font-medium ${workDoneColors.text} leading-normal`}>work done so far</span>
-                </div>
-                <div className="relative">
-                  <div className={`${workDoneColors.background} w-full rounded-md h-3 relative overflow-visible`}>
+                  <div className="w-20 bg-blue-200 rounded-full h-2.5 overflow-hidden cursor-pointer">
                     <div
-                      className={`${workDoneColors.bar} h-3 rounded-md`}
-                      style={{ width: `${String(forecast.current)}%` }}
+                      className="h-full bg-blue-800 rounded-full transition-all"
+                      style={{ width: `${pointsPercentage}%` }}
                     />
                   </div>
+                  <span className="text-xs text-gray-600">pts</span>
+                  {/* Hover Tooltip */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
+                    {Math.round(pointsPercentage)}% of maximum points
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                  </div>
                 </div>
-                {/* Arrow Indicator for Expected at Time of Year - positioned below the bar */}
-                <div className="relative" style={{ height: '30px' }}>
-                  <div
-                    className="absolute z-20 pointer-events-none"
-                    style={{
-                      left: `${String(expectedWorkDonePercentage)}%`,
-                      top: '8px',
-                    }}
-                  >
-                    {/* Upward pointing triangle arrow - centered at the exact position */}
+
+                {/* Work Done */}
+                <div className="group relative flex items-center gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className={`text-base font-semibold ${workDoneColors.text}`}>{workDonePercentage}%</span>
+                  </div>
+                  <div className="relative">
+                    <div className={`w-20 ${workDoneColors.background} rounded-full h-2.5 overflow-visible cursor-pointer`}>
+                      <div
+                        className={`h-full ${workDoneColors.bar} rounded-full transition-all`}
+                        style={{ width: `${workDonePercentage}%` }}
+                      />
+                    </div>
+                    {/* Arrow Indicator */}
                     <div
-                      className="w-0 h-0"
+                      className="absolute z-10 pointer-events-none"
                       style={{
-                        borderLeft: '8px solid transparent',
-                        borderRight: '8px solid transparent',
-                        borderBottom: `14px solid #6b7280`,
+                        left: `${expectedWorkDonePercentage}%`,
+                        top: '100%',
+                        marginTop: '2px',
                         transform: 'translateX(-50%)',
                       }}
-                    />
-                    {/* Expected at Time of Year Label - positioned based on arrow position */}
-                    <div 
-                      className="text-sm text-gray-500 font-medium whitespace-nowrap absolute leading-normal"
-                      style={{
-                        ...(expectedWorkDonePercentage >= 50 
-                          ? { right: '30px', textAlign: 'right' }
-                          : { left: '12px', textAlign: 'left' }
-                        ),
-                        top: '-2px',
-                      }}
                     >
-                      Target for {new Date().toLocaleDateString('en-GB', { month: 'short' })}: {Math.round(expectedWorkDonePercentage * 10) / 10}%
+                      <div
+                        className="w-0 h-0"
+                        style={{
+                          borderLeft: '4px solid transparent',
+                          borderRight: '4px solid transparent',
+                          borderBottom: '6px solid #6b7280',
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-600">done</span>
+                  {/* Hover Tooltip */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-30">
+                    Target for {new Date().toLocaleDateString('en-GB', { month: 'short' })}: {Math.round(expectedWorkDonePercentage * 10) / 10}%
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                  </div>
+                </div>
+
+                {/* Earned */}
+                <div className="group relative flex items-center gap-2">
+                  <span className="text-base font-semibold text-green-700">£{earnedSoFar.toLocaleString()}</span>
+                  <div className="w-20 rounded-full h-2.5 overflow-hidden cursor-pointer flex">
+                    <div
+                      className="h-full bg-green-700 transition-all"
+                      style={{ width: `${earnedPercentage}%` }}
+                    />
+                    <div
+                      className="h-full bg-green-100"
+                      style={{ width: `${remainingToEarnPercentage}%` }}
+                    />
+                    <div
+                      className="h-full"
+                      style={{
+                        width: `${prevalenceOpportunityPercentage}%`,
+                        background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 3px)',
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs text-gray-600">earned</span>
+                  {/* Hover Tooltip */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 min-w-max">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-2 bg-green-700 rounded-sm flex-shrink-0"></div>
+                        <span>£{earnedSoFar.toLocaleString()} earned</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-2 bg-green-100 rounded-sm flex-shrink-0"></div>
+                        <span>£{remainingToEarnAmount.toLocaleString()} missed QOF earnings</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-2 rounded-sm flex-shrink-0" style={{
+                          background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 1px, #16a34a 1px, #16a34a 2px)'
+                        }}></div>
+                        <span>£{prevalenceOpportunityAmount.toLocaleString()} by increasing prevalence</span>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="flex-shrink-0">
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
+                  Save £{costData.savings.toLocaleString()} today!
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Hero Section - always visible */}
+      <div ref={heroRef} className="mb-8">
+        {/* View Mode Toggle - no-op buttons for now */}
+        <div className="flex gap-2 mb-4">
+          <button
+            className="px-4 py-2 text-sm font-medium rounded-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            This Year's Forecast
+          </button>
+          <button
+            className="px-4 py-2 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          >
+            Last Year's Performance
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* QOF Forecast Card */}
+          <div className="card-glass p-6 lg:col-span-2 relative">
+            <div className="flex items-start justify-between mb-1">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-3">
+                  Your forecast for this QOF year
+                </h3>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 leading-normal mb-6">
+              Showing potential QOF achievement for {areaDescription}.
+            </p>
+
+            {/* Progress Bars Container */}
+            <div className="relative" style={{ minHeight: '160px' }}>
+              {/* Progress Bars */}
+              <div className="space-y-6 relative z-0">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Points achieved */}
+                  <div>
+                    <div className="flex items-baseline mb-2 justify-between">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-base font-semibold text-blue-800 leading-tight">
+                          {pointsAchieved}
+                        </span>
+                        <span className="text-sm font-medium text-blue-800 leading-normal">points</span>
+                      </div>
+                      <span className="text-sm font-medium text-blue-800 leading-normal">out of {maxPoints}</span>
+                    </div>
+                    <div className="w-full bg-blue-200 rounded-md h-3 relative overflow-visible">
+                      <div
+                        className="bg-blue-800 h-3 rounded-md"
+                        style={{ width: `${pointsPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Work Done */}
+                  <div>
+                    <div className="flex items-baseline mb-2 gap-2">
+                      <span className={`text-base font-medium ${workDoneColors.text} leading-tight`}>{workDonePercentage}%</span>
+                      <span className={`text-sm font-medium ${workDoneColors.text} leading-normal`}>work done so far</span>
+                    </div>
+                    <div className="relative">
+                      <div className={`${workDoneColors.background} w-full rounded-md h-3 relative overflow-visible`}>
+                        <div
+                          className={`${workDoneColors.bar} h-3 rounded-md`}
+                          style={{ width: `${workDonePercentage}%` }}
+                        />
+                      </div>
+                    </div>
+                    {/* Arrow Indicator for Expected at Time of Year - positioned below the bar */}
+                    <div className="relative" style={{ height: '30px' }}>
+                      <div
+                        className="absolute z-20 pointer-events-none"
+                        style={{
+                          left: `${expectedWorkDonePercentage}%`,
+                          top: '8px',
+                        }}
+                      >
+                        {/* Upward pointing triangle arrow - centered at the exact position */}
+                        <div
+                          className="w-0 h-0"
+                          style={{
+                            borderLeft: '8px solid transparent',
+                            borderRight: '8px solid transparent',
+                            borderBottom: `14px solid #6b7280`,
+                            transform: 'translateX(-50%)',
+                          }}
+                        />
+                        {/* Expected at Time of Year Label - positioned based on arrow position */}
+                        <div
+                          className="text-sm text-gray-500 font-medium whitespace-nowrap absolute leading-normal"
+                          style={{
+                            ...(expectedWorkDonePercentage >= 50
+                              ? { right: '30px', textAlign: 'right' }
+                              : { left: '12px', textAlign: 'left' }
+                            ),
+                            top: '-2px',
+                          }}
+                        >
+                          Target for {new Date().toLocaleDateString('en-GB', { month: 'short' })}: {Math.round(expectedWorkDonePercentage * 10) / 10}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                {/* Earned - Partitioned into 3 sections */}
+                <div>
+                  <div className="flex items-baseline mb-2 justify-between">
+                    <div className="flex items-baseline gap-2">
+
+                      <span className="text-base font-semibold text-green-700 leading-tight">
+                        £{earnedSoFar.toLocaleString()}
+                      </span>
+                      <span className="text-sm font-medium text-green-700 leading-normal">earned</span>
+                    </div>
+                    <span className="text-sm font-medium text-green-700 leading-normal">out of £{totalPotentialWithPrevalence.toLocaleString()}</span>
+                  </div>
+                  <div className="w-full rounded-md h-6 relative overflow-visible flex">
+                    {/* Section 1: Earned so far (solid green) */}
+                    <div
+                      className="bg-green-700 h-6 rounded-l-md"
+                      style={{ width: `${earnedPercentage}%` }}
+                    />
+                    {/* Section 2: Remaining to earn (lighter solid green) */}
+                    <div
+                      className="bg-green-100 h-6"
+                      style={{ width: `${remainingToEarnPercentage}%` }}
+                    />
+                    {/* Section 3: Prevalence opportunity (green diagonal stripes with transparent background) */}
+                    <div
+                      className="h-6 rounded-r-md"
+                      style={{
+                        width: `${prevalenceOpportunityPercentage}%`,
+                        background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 4px, #16a34a 4px, #16a34a 6px)',
+                      }}
+                    />
+                  </div>
+
+                  {/* Legend */}
+                  <div className="mt-6 flex gap-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-3 bg-green-100 rounded border border-green-400"></div>
+                      <span className="text-gray-700 text-base font-medium leading-tight">
+                        £{remainingToEarnAmount.toLocaleString()}
+                      </span>
+                      <span className="text-gray-700 text-sm leading-normal">missed QOF earnings</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-3 rounded border border-green-600"
+                        style={{
+                          background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 4px)',
+                        }}
+                      ></div>
+                      <span className="text-gray-700 text-base font-medium leading-tight">
+                        £{prevalenceOpportunityAmount.toLocaleString()}
+                      </span>
+                      <span className="text-gray-700 text-sm leading-normal">by increasing prevalence</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-
-            {/* Earned So Far - Partitioned into 3 sections */}
-            <div>
-              <div className="flex items-baseline mb-2 justify-between">
-                <div className="flex items-baseline gap-2">
-
-                  <span className="text-base font-semibold text-green-700 leading-tight">
-                    £{earnedSoFar.toLocaleString()}
-                  </span>
-                  <span className="text-sm font-medium text-green-700 leading-normal">earned so far</span>
-                </div>
-                <span className="text-sm font-medium text-green-700 leading-normal">out of £{maxEarned.toLocaleString()}</span>
-              </div>
-              <div className="w-full rounded-md h-6 relative overflow-visible flex">
-                {/* Section 1: Earned so far (solid green) */}
-                <div
-                  className="bg-green-700 h-6 rounded-l-md"
-                  style={{ width: `${String(earnedPercentage)}%` }}
-                />
-                {/* Section 2: Remaining to earn (lighter solid green) */}
-                <div
-                  className="bg-green-100 h-6"
-                  style={{ width: `${String(remainingToEarnPercentage)}%` }}
-                />
-                {/* Section 3: Prevalence opportunity (green diagonal stripes with transparent background) */}
-                <div
-                  className="h-6 rounded-r-md"
-                  style={{
-                    width: `${String(prevalenceOpportunityPercentage)}%`,
-                    background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 4px, #16a34a 4px, #16a34a 6px)',
-                  }}
-                />
-              </div>
-              
-              {/* Legend */}
-              <div className="mt-6 flex gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-3 bg-green-100 rounded border border-green-400"></div>
-                  <span className="text-gray-700 text-base font-medium leading-tight">
-                    £{remainingToEarnAmount.toLocaleString()}
-                  </span>
-                  <span className="text-gray-700 text-sm leading-normal">to earn from diagnosed patients</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-8 h-3 rounded border border-green-600"
-                    style={{
-                      background: 'repeating-linear-gradient(45deg, transparent 0px, transparent 2px, #16a34a 2px, #16a34a 4px)',
-                    }}
-                  ></div>
-                  <span className="text-gray-700 text-base font-medium leading-tight">
-                    £{prevalenceOpportunityAmount.toLocaleString()}
-                  </span>
-                  <span className="text-gray-700 text-sm leading-normal">from undiagnosed patients</span>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Potential Cost Savings Card */}
-      <div className="card-glass p-5">
-        {/* Headline */}
-        <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">
-          {viewMode === 'lastYear' ? 'Cost Analysis: Last Year' : 'Cost for completing QOF'}
-        </h3>
+          {/* Cost Analysis Card */}
+          <div className="card-glass p-5">
+            {/* Headline */}
+            <h3 className="text-sm font-semibold text-gray-700 mb-4 leading-snug">
+              Cost Analysis: Last Year
+            </h3>
 
-        {viewMode === 'lastYear' ? (
-          <>
-            {/* Last Year Mode: Show actual spend vs potential savings */}
-            <div className="flex items-center gap-3 mb-4">
+            {/* Large headline amounts */}
+            <div className="flex items-center gap-2 mb-4">
               <div className="text-3xl font-bold text-red-600 leading-tight">
                 £{costData.traditionalCost.toLocaleString()}
               </div>
-              <div className="text-lg text-gray-500">→</div>
-              <div className="text-3xl font-bold text-green-700 leading-tight">
-                £{costData.suveraCost.toLocaleString()}
+              <span className="text-gray-400 text-xl">→</span>
+              <div className="text-3xl font-bold text-green-600 leading-tight">
+                £{(costData.suveraCost - prevalenceOpportunityAmount - remainingToEarnAmount).toLocaleString()}
               </div>
             </div>
 
             {/* Breakdown */}
             <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-700 leading-normal">Traditional cost (actual spend)</span>
+                <span className="text-gray-700 leading-normal">Traditional cost (estimated)</span>
                 <span className="font-semibold text-gray-900 leading-normal">
                   £{costData.traditionalCost.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-700 leading-normal">Suvera cost (could have spent)</span>
+                <span className="text-gray-700 leading-normal">Suvera cost</span>
+                <span className="leading-normal">
+                  <span className="font-semibold text-gray-900">£{costData.suveraCost.toLocaleString()}</span>
+                  <span className="font-semibold text-green-600"> (-£{costData.savings.toLocaleString()})</span>
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Increased earnings (prevalence)</span>
                 <span className="font-semibold text-green-600 leading-normal">
-                  £{costData.suveraCost.toLocaleString()}
+                  -£{prevalenceOpportunityAmount.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 leading-normal">Increased earnings (missed QOF)</span>
+                <span className="font-semibold text-green-600 leading-normal">
+                  -£{remainingToEarnAmount.toLocaleString()}
                 </span>
               </div>
             </div>
 
             {/* Savings Display */}
             <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-xs text-gray-600 mb-1">Could have saved</div>
-              <div className="text-2xl font-bold text-green-700">
-                £{costData.savings.toLocaleString()}
+              <div className="text-xs text-gray-600 mb-1">How much you could have saved</div>
+              <div className="text-2xl font-bold text-green-600">
+                £{(costData.savings + prevalenceOpportunityAmount + remainingToEarnAmount).toLocaleString()}
               </div>
             </div>
 
@@ -647,49 +508,9 @@ export function HeroSection({ condition, viewMode = 'forecast', onViewModeChange
             <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
               See how to save this year
             </button>
-          </>
-        ) : (
-          <>
-            {/* Forecast Mode: Show potential savings */}
-            {costData.finalCost !== undefined && costData.prevalenceReduction !== undefined && (
-              <>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="text-3xl font-bold text-gray-500 line-through leading-tight">
-                    £{costData.traditionalCost.toLocaleString()}
-                  </div>
-                  <div className="text-3xl font-bold text-green-700 leading-tight">
-                    £{costData.finalCost.toLocaleString()}
-                  </div>
-                </div>
-
-                {/* Breakdown */}
-                <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 leading-normal">Suvera clinic cost</span>
-                    <span className="font-semibold text-gray-900 leading-normal">
-                      £{costData.suveraCost.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 leading-normal">Additional reduction (d.u. prevalence)</span>
-                    <span className="font-semibold text-green-600 leading-normal">
-                      -£{costData.prevalenceReduction.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-base font-semibold hover:bg-blue-700 transition-colors">
-                  Save £{costData.savings.toLocaleString()} today!
-                </button>
-              </>
-            )}
-          </>
-        )}
-      </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
